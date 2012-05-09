@@ -1,0 +1,79 @@
+# Create a cli calendar
+
+
+## Specs: condensed and elaborated
+
+  1.  create a text calendar
+  2.  display a month diagram, plain or fancy ascii art
+        - must show days
+        - must show each day's events, if any
+  3.  events can be added to a day
+  4.  events can be edited
+  5.  events can be deleted
+  6.  
+
+    Create a text calendar with a mysql backend to save the data.
+
+    The user interface will all be text.
+
+    The interface will be able to display a diagram of the month
+      - this is basically just drawing a calendar using ascii characters
+
+    The calendar will show the day number in the corner of each box.
+
+    Each day will also display all the events for that day.
+
+    Feel free to be flexible when designing the interface
+
+    The user will need to be able to add, edit, and delete events from the calendar.
+
+    Create a class called CalendarRegistry which will have static methods for getting and saving the events.
+
+    An Event bean must have a private int called id that is initialized to -1.
+      - This will then be set to the actual database id after if the event has a corresponding record in the database.
+
+    The event needs to keep track of:
+      - what day the event is on
+      - what time the event starts
+      - what time the event ends
+      - the type of event (meeting, appointment, etc)
+      - a description of the event
+      - and a list of guests invited to the event
+
+    A guest will be represented in java with a Guest bean that has:
+      - an id
+      - name
+      - and an email address
+
+    A guest can be attending more than one event
+
+    if a guest is attending more than one event the same guest database row should be used.
+
+
+## Specs: from ticket:
+
+    Create a text calendar with a mysql backend to save the data. The user
+    interface will all be text. Make the user interface as intuitive as you
+    can. The interface will be able to display a diagram of the month, this is
+    basically just drawing a calendar using dashes and pipes and any other
+    ascii characters you want. The calendar will show the day number in the
+    corner of each box. Try and make the text calendar look as nice as you
+    can. Each day will also display all the events for that day. Feel free to
+    be flexible when designing the interface but it does need to be intuitive
+    and clear to the user. The user will need to be able to add, edit, and
+    delete events from the calendar.
+
+    Create a class called CalendarRegistry which will have static methods for
+    getting and saving the events. An Event bean must have a private int
+    called id that is initialized to -1. This will then be set to the actual
+    database id after if the event has a corresponding record in the database.
+    The event needs to keep track of what day the event is on, what time the
+    event starts, what time the event ends, the type of event (meeting,
+    appointment, etc), a description of the event, and a list of guests
+    invited to the event. A guest will be represented in java with a Guest
+    bean that has an id, name, and an email address. A guest can be attending
+    more than one event, if a guest is attending more than one event there
+    same guest database row should be used.
+
+    Since these specs aren’t all encompassing, please let me know if you have
+    any questions on how this should work.
