@@ -1,0 +1,7 @@
+public CalRegistry
+{
+  /*
+   *  
+   */
+  public static
+}
