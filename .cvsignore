@@ -1,0 +1,8 @@
+.git
+.gitignore
+*.class
+Makefile
+*.jar
+org
+junit
+META-INF
