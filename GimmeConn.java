@@ -6,8 +6,9 @@ import java.sql.SQLException;
 
 public class GimmeConn
 {
-  private final String url = "jdbc:mysql://localhost/calendar";
-  private final String user = "sa";
+  private final String url = "jdbc:mysql://localhost/cal";
+  private final String user = "cal";
+  private final String pass = "cal";
 
   public Connection conn;
 
@@ -15,7 +16,7 @@ public class GimmeConn
   {
     try
     {
-      conn = DriverManager.getConnection(url, user, "");
+      conn = DriverManager.getConnection(url, user, pass);
     }
     catch (SQLException e)
     {
