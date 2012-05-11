@@ -9,7 +9,8 @@ drop table if exists guests;
 
 create table events
 (
-  id            double not null auto_increment,
+               /* over nine million billion events are enough for everyone..? */
+  id            bigint not null auto_increment,
   day           varchar (10),
   timeStart     varchar (5),
   timeEnd       varchar (5),
