@@ -69,17 +69,17 @@ public class ChangeDb
   public void modRow(String table, ArrayList<ArrayList<String>> lolcols) throws SQLException
   {
     // get primary key, then remove it from list
-    String keyName = lolcols.get(0).get(0);
-    String keyValue = lolcols.get(0).get(1);
+    String pkName = lolcols.get(0).get(0);
+    String pkValue = lolcols.get(0).get(1);
     lolcols.remove(0);
 
     // if primary key isn't in table, add it
-    if (!qry.keyExists(table, keyName, keyValue))
+    if (!qry.keyExists(table, pkName, pkValue))
     {
-      addRow(table, keyName, keyValue);
+      addRow(table, pkName, pkValue);
     }
 
-    // loop throw list, updating column/value pairs
+    // loop through list, updating column/value pairs
     for (ArrayList<String> list : lolcols)
     {
       String colName = list.get(0);
@@ -87,9 +87,9 @@ public class ChangeDb
 
       ps = conn.prepareStatement(
         String.format("update %s set %s = ?", table, colName) +
-        String.format("where %s = ?", keyName));
+        String.format("where %s = ?", pkName));
       ps.setString(1, colVal);
-      ps.setString(2, keyValue);
+      ps.setString(2, pkValue);
 
       ps.executeUpdate();
     }
