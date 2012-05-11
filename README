@@ -2,13 +2,28 @@
 
 ## The displayed calendar
 
-Could use one or more of the designs below. Could also maybe commission some border art, downmix to ascii.
+Could use one or more of the designs below. Could also maybe commission some
+  border art, downmix to ascii.
 
-Would be cool to not append an 'e' to a date with an event; instead invert the two-col date field.
+Would be cool to not append an 'e' to a date with an event; instead invert the
+  two-col date field.
 
-Alternatively, highlight event days with a colour, or have the 'e' be a different colour.
+Alternatively, highlight event days with a colour, or have the 'e' be a
+  different colour.
 
 May want to number weeks for ease of selection in tui.
+
+Probably want to display numbers for full week, even if day isn't in month.
+
+  1.  when thinking about events, people care less about the division of months,
+        more about the division of weeks.
+
+  2.  given (1), a month should be defined as a small collection of weeks, more
+        or less conforming to the standard month division.
+
+  3.  thus, the last week of may 2012 should also show the first three days of
+        june
+
 
         May 2012
 Mo  Tu  We  Th  Fr  Sa  Su
