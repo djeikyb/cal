@@ -1,4 +1,4 @@
-package gps.tasks.task3663;
+package gps.tasks.task3663;//{{{
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,6 +11,7 @@ public class QueryDb
 {
   private Connection conn;
   private PreparedStatement ps;
+  private ResultSet rs;
 
 
   /**
@@ -109,6 +110,7 @@ public class QueryDb
 
     return resultInt(ps.executeQuery(), "id");
   }
+//}}}
 
   public List<Integer> getEvents_these(List<String> days) throws SQLException
   {
@@ -119,13 +121,29 @@ public class QueryDb
 
     for (String date : days)
     {
+      System.out.println("start of loop");  // debug
+      
+      System.out.println("date: " + date); // debug
+      
       ps.setString(1, date);
-      result.add(ps.executeQuery().getInt("id"));
+      System.out.println("prepped statement: " + ps); // debug
+      
+      rs = ps.executeQuery();
+      System.out.println("result set: " + rs); // debug
+      
+      rs.next();
+      System.out.println("after rs.next()");  // debug
+      
+      System.out.println("result set: " + rs); // debug
+      result.add(rs.getInt(1));
+      
+      System.out.println("end of loop");  // debug
     }
 
     return result;
   }
 
+//{{{
   public List<String> getDescriptions(List<Integer> eids) throws SQLException
   {
     // TODO: try without = new, see if can avoid imposing a list type
@@ -150,5 +168,4 @@ public class QueryDb
 //------------------------------------------------------------------------------
 
 
-
-}
+}//}}}
