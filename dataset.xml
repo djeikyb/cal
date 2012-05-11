@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <events id="1" day="0000-00-00" timeStart="" timeEnd="" kind="other" description="beginning of common era" guests=""/>
+  <events id="2" day="2012-12-31" timeStart="21:00" timeEnd="" kind="other" description="new year&apos;s eve party" guests=""/>
+  <events id="3" day="2012-05-05" timeStart="15:00" timeEnd="18:00" kind="other" description="cinco de mayo happy hour" guests=""/>
+  <events id="4" day="2012-05-05" timeStart="" timeEnd="" kind="holiday" description="cinco de mayo" guests=""/>
+  <events id="5" day="2012-05-13" timeStart="" timeEnd="" kind="holiday" description="mother&apos;s day" guests=""/>
+  <events id="6" day="2012-05-28" timeStart="" timeEnd="" kind="holiday" description="memorial day" guests=""/>
+  <guests/>
+</dataset>
