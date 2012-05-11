@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class Event
 {
   private String id;
-  private String date;
+  private String day;
   private String timeStart;
   private String timeEnd;
   private String kind;
@@ -18,9 +18,9 @@ public class Event
   Event()
   {
     id = "-1";
-    date = "0000-00-00";
-    setTimeStart("00:00");
-    setTimeEnd("23:59");
+    day = "0000-00-00";
+    timeStart = "00:00";
+    timeEnd = "23:59";
     kind = "";
     description = "";
     guests = "";
@@ -33,14 +33,14 @@ public class Event
 //------------------------------------------------------------------------------
 
   /**
-   * get all bean attributes as a list-of-list
+   *  get all bean attributes as a list-of-list
    */
   public ArrayList<ArrayList<String>> getLol()
   {
     ArrayList<ArrayList<String>> lol = new ArrayList<ArrayList<String>>();
 
     lol.add(new ArrayList<String>(Arrays.asList("id",           getId())));
-    lol.add(new ArrayList<String>(Arrays.asList("date",         getDate())));
+    lol.add(new ArrayList<String>(Arrays.asList("day",          getDay())));
     lol.add(new ArrayList<String>(Arrays.asList("timeStart",    getTimeStart())));
     lol.add(new ArrayList<String>(Arrays.asList("timeEnd",      getTimeEnd())));
     lol.add(new ArrayList<String>(Arrays.asList("kind",         getKind())));
@@ -67,14 +67,14 @@ public class Event
   }
 
 
-  public String getDate()
+  public String getDay()
   {
-    return date;
+    return day;
   }
 
-  public void setDate(String date)
+  public void setDay(String day)
   {
-    this.date = date;
+    this.day = day;
   }
 
 
