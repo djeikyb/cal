@@ -6,11 +6,19 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
+import com.mysql.jdbc.Driver;
+
 import org.dbunit.DBTestCase;
 import org.dbunit.PropertiesBasedJdbcDatabaseTester;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+
 import org.junit.Test;
+import org.junit.After;
+import org.junit.Before;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+
 
 public class TestQuery extends DBTestCase
 {
@@ -29,6 +37,7 @@ public class TestQuery extends DBTestCase
   protected IDataSet getDataSet() throws Exception
   {
     return new FlatXmlDataSetBuilder().build(new FileInputStream("src/gps/tasks/task3663/dataset.xml"));
+    //return new FlatXmlDataSetBuilder().build(new FileInputStream("dataset.xml"));
   }
 
   @Test
@@ -48,6 +57,22 @@ public class TestQuery extends DBTestCase
 
     List<Integer> expected = Arrays.asList(1,6);
     List<Integer> result = q.getEvents_these(days);
+
+    assertTrue(expected.toString().equals(
+               result.toString()));
+  }
+
+  @Test
+  public void test_getDescriptions() throws SQLException
+  {
+    List<Integer> eids = Arrays.asList(1, 2, 5, 8);
+
+    List<String> expected = Arrays.asList(
+      "",
+      "halloween",
+      "cinco de mayo happy hour",
+      "memorial day");
+    List<String> result = q.getDescriptions(eids);
 
     assertTrue(expected.toString().equals(
                result.toString()));
