@@ -3,9 +3,12 @@ package gps.tasks.task3663;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class QueryDb
 {
@@ -87,11 +90,11 @@ public class QueryDb
    *  @return
    *  @throws SQLException
    */
-  public boolean keyExists(String table, String keyName, String keyValue) throws SQLException
+  public boolean keyExists(String table, String keyName, Integer keyValue) throws SQLException
   {
     ps = conn.prepareStatement(
       String.format("select %s from %s where %s = ?", keyName, table, keyName));
-    ps.setString(1, keyName);
+    ps.setInt(1, keyValue);
 
     return ps.executeQuery().next();
   }
@@ -146,6 +149,55 @@ public class QueryDb
     }
 
     return result;
+  }
+
+  /**
+   * @param table   table to get data from
+   * @param ids     list of primary keys for table
+   * @return        a list of maps, each representing a row
+   */
+  public List<Map<String, String>> getRows(String table, List<Integer> ids) throws SQLException
+  {
+    List<Map<String, String>> rowList = new ArrayList<Map<String, String>>();
+
+    // gets data from a single row
+    ps = conn.prepareStatement(
+      String.format("select * from %s where id = ?", table));
+
+    // generate the maps for rowList
+    for (Integer id : ids)
+    {
+      ResultSetMetaData rsmd;
+      Map<String, String> row = new HashMap<String, String>();
+      List<String> columnList = new ArrayList<String>();
+
+      // set the primary key and execute the query
+      ps.setInt(1, id);
+      rs = ps.executeQuery();
+
+      // generate list of columns
+      rsmd = rs.getMetaData();
+      for (Integer i = 1; i <= rsmd.getColumnCount(); i++)
+      {
+        columnList.add(rsmd.getColumnName(i));
+      }
+
+      // get the single row
+      rs.next();
+
+      // for each element in list of columns..
+      // map the column value to the column name
+      for (String column : columnList)
+      {
+        row.put(column, rs.getString(column));
+      }
+
+      // add row to list of rows
+      rowList.add(row);
+    }
+
+
+    return rowList;
   }
 
 
