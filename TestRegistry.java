@@ -9,12 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mysql.jdbc.Driver;
-
-import org.dbunit.DBTestCase;
 import org.dbunit.IDatabaseTester;
 import org.dbunit.JdbcDatabaseTester;
-import org.dbunit.PropertiesBasedJdbcDatabaseTester;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
@@ -24,9 +20,12 @@ import org.junit.Test;
 import org.junit.After;
 import org.junit.Before;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+
+import static org.junit.Assert.*;
+import static org.hamcrest.core.Is.is;
 
 
+//@SuppressWarnings("unchecked")
 public class TestRegistry
 {
 
@@ -143,8 +142,7 @@ public class TestRegistry
 
     // will it blend?
 
-    assertTrue(expected.toString().equals(
-               result.toString()));
+    assertThat(result, is(expected));
   }
 
 
@@ -156,16 +154,6 @@ public class TestRegistry
   @Test
   public void test_addGuestBeans_weirdName() throws SQLException
   {
-    //  use the function
-
-    CalendarRegistry.addGuestBeans(Arrays.asList(1));
-
-
-    //  capture side effect
-
-    List<Map<String, String>> result = CalendarRegistry.guestBeans;
-
-
     //  expected value of CalendarRegistry.guestBeans
 
     Map<String, String> guest0 = new HashMap<String, String>();
@@ -176,10 +164,19 @@ public class TestRegistry
     guest0.put("email",  "foo@bar.biz");
 
 
+    //  use the function
+
+    CalendarRegistry.addGuestBeans(Arrays.asList(1));
+
+
+    //  capture side effect
+
+    List<Map<String, String>> result = CalendarRegistry.guestBeans;
+
+
     //  will it blend?
 
-    assertTrue(expected.toString().equals(
-               result.toString()));
+    assertThat(result, is(expected));
   }
 
 
@@ -191,17 +188,7 @@ public class TestRegistry
   @Test
   public void test_addGuestBeans() throws SQLException
   {
-    /* use the function */
-
-    CalendarRegistry.addGuestBeans(Arrays.asList(3,2,5));
-
-
-    /* capture side effect */
-
-    List<Map<String, String>> actual = CalendarRegistry.guestBeans;
-
-
-    /* expected value of CalendarRegistry.GuestBeans */
+    // expected value of CalendarRegistry.GuestBeans
 
     Map<String, String> guest0 = new HashMap<String, String>();
     Map<String, String> guest1 = new HashMap<String, String>();
@@ -221,9 +208,19 @@ public class TestRegistry
     guest2.put("email",  "pdgn@zappa.fam");
 
 
-    /* will it blend? */
+    // use the function
 
-    assertTrue(String.format("expected: %s\nbut was: %s", expected, actual), expected.toString().equals(actual.toString()));
+    CalendarRegistry.addGuestBeans(Arrays.asList(3,2,5));
+
+
+    // capture side effect
+
+    List<Map<String, String>> actual = CalendarRegistry.guestBeans;
+
+
+    // will it blend?
+
+    assertThat(actual, is(expected));
   }
 
 
@@ -239,6 +236,7 @@ public class TestRegistry
 
     CalendarRegistry.refreshEventBeans();
 
+    assertTrue("test and method unwritten", false);
 
   }
 
