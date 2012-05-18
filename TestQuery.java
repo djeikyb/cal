@@ -9,12 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.mysql.jdbc.Driver;
-
-import org.dbunit.DBTestCase;
-import org.dbunit.PropertiesBasedJdbcDatabaseTester;
+import org.dbunit.IDatabaseTester;
+import org.dbunit.JdbcDatabaseTester;
+import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.operation.DatabaseOperation;
 
 import org.junit.Test;
 import org.junit.After;
@@ -23,25 +23,63 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 
-public class TestQuery extends DBTestCase
+public class TestQuery
 {
-  Connection conn = new GimmeConn().conn;
-  QueryDb q = new QueryDb(conn);
 
-  public TestQuery(String name)
+/*  Pick a working directory
+  private String path = "src/gps/tasks/task3663/";  // eclipse
+  private String path = "";                         // cwd
+*/
+  private String path = "src/gps/tasks/task3663/";  // eclipse
+
+//------------------------------------------------------------------------------
+//  Setup
+//------------------------------------------------------------------------------
+
+  private IDatabaseTester dbtester;
+  private Connection gconn = new GimmeConn().conn;
+  private ModifyDb mod = new ModifyDb(gconn);
+  private QueryDb q = new QueryDb(gconn);
+  IDatabaseConnection dbuconn;
+
+  @Before
+  public void setUp() throws Exception
   {
-    super( name );
-    System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_DRIVER_CLASS, "com.mysql.jdbc.Driver");
-    System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_CONNECTION_URL, "jdbc:mysql://localhost/cal");
-    System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_USERNAME, "cal");
-    System.setProperty( PropertiesBasedJdbcDatabaseTester.DBUNIT_PASSWORD, "cal");
+
+    // set up connection
+    dbtester = new JdbcDatabaseTester("com.mysql.jdbc.Driver",
+                                      "jdbc:mysql://localhost/cal",
+                                      "cal",
+                                      "cal");
+    //initialise dataset
+    IDataSet dataSet = getDataSet("dataset.xml");
+    dbtester.setDataSet(dataSet);
+
+    dbuconn = dbtester.getConnection();
+
+    // call default setUpOperation
+    DatabaseOperation.TRUNCATE_TABLE.execute(dbuconn, getDataSet("dataset.xml"));
+    dbtester.onSetup();
   }
 
-  protected IDataSet getDataSet() throws Exception
+  @After
+  public void tearDown() throws Exception
   {
-    return new FlatXmlDataSetBuilder().build(new FileInputStream("src/gps/tasks/task3663/dataset.xml"));
-    //return new FlatXmlDataSetBuilder().build(new FileInputStream("dataset.xml"));
+    dbtester.onTearDown();
   }
+
+  protected IDataSet getDataSet(String f) throws Exception
+  {
+    return
+      new FlatXmlDataSetBuilder().build(
+        new FileInputStream(path + f));
+  }
+
+
+
+//------------------------------------------------------------------------------
+//  Tests
+//------------------------------------------------------------------------------
 
   @Test
   public void test_getEventsThis_mayo() throws SQLException
@@ -137,6 +175,24 @@ public class TestQuery extends DBTestCase
 
     assertTrue(expected.toString().equals(
                result.toString()));
+  }
+
+  @Test
+  public void test_maxId() throws SQLException
+  {
+    Integer actual = q.maxId("events");
+    Integer expected = 9;
+
+    assertTrue(String.format("expected %s, but was %s", expected, actual), actual.toString().equals(expected.toString()));
+  }
+
+  @Test
+  public void test_nextId() throws SQLException
+  {
+    Integer actual = q.nextId("events");
+    Integer expected = 10;
+
+    assertTrue(String.format("expected %s, but was %s", expected, actual), actual.toString().equals(expected.toString()));
   }
 
 }
