@@ -66,7 +66,8 @@ public class ModifyDb
 
 
   /**
-   * Add data to a row in a table. The row will be created if it doesn't exist.
+   * Add data (from a bean) to a row in a table. The row will be created if it
+   * doesn't exist.
    * @param table
    * @param lolcols   list of column/value pairs
    * @throws SQLException
@@ -84,6 +85,7 @@ public class ModifyDb
     if (!qry.keyExists(table, pkName, pkValue))
     {
       addRow(table, pkName, pkValue);
+      pkValue = qry.maxId(table);
     }
 
     // loop through list, updating column/value pairs
@@ -93,7 +95,7 @@ public class ModifyDb
       String colVal = list.get(1);
 
       ps = conn.prepareStatement(
-        String.format("update %s set %s = ?", table, colName) +
+        String.format("update %s set %s = ? ", table, colName) +
         String.format("where %s = ?", pkName));
       ps.setString(1, colVal);
       ps.setInt(2, pkValue);
