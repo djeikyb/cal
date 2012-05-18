@@ -1,1 +1,4 @@
 CVS
+*.jar
+*.class
+META-INF
