@@ -18,9 +18,9 @@ public class Event
   Event()
   {
     id = "-1";
-    day = "0000-00-00";
-    timeStart = "00:00";
-    timeEnd = "23:59";
+    day = "";
+    timeStart = "";
+    timeEnd = "";
     kind = "";
     description = "";
     guests = "";
