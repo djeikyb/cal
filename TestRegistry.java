@@ -12,9 +12,13 @@ import java.util.Map;
 import com.mysql.jdbc.Driver;
 
 import org.dbunit.DBTestCase;
+import org.dbunit.IDatabaseTester;
+import org.dbunit.JdbcDatabaseTester;
 import org.dbunit.PropertiesBasedJdbcDatabaseTester;
+import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
+import org.dbunit.operation.DatabaseOperation;
 
 import org.junit.Test;
 import org.junit.After;
@@ -26,45 +30,59 @@ import static org.junit.Assert.assertFalse;
 public class TestRegistry
 {
 
+/*  Pick a working directory
+  private String path = "src/gps/tasks/task3663/";  // eclipse
+  private String path = "";                         // make
+*/
+  private String path = "src/gps/tasks/task3663/";  // eclipse
 
 //------------------------------------------------------------------------------
 //  Setup
 //------------------------------------------------------------------------------
 
-  private Connection conn = new GimmeConn().conn;
-  private QueryDb q = new QueryDb(conn);
-  private ModifyDb mod = new ModifyDb(conn);
-  private IDatabaseTester database_tester;
-
-
-  public IDataSet getDataSet() throws FileNotFoundException, DataSetException
-  {
-    return new FlatXmlDataSetBuilder().build(
-        new FileInputStream("src/gps/tasks/task3663/dataset.xml"));
-  }
-
+  private IDatabaseTester dbtester;
+  private Connection gconn = new GimmeConn().conn;
+  private ModifyDb mod = new ModifyDb(gconn);
+  IDatabaseConnection dbuconn;
 
   @Before
-  public void setUp()
+  public void setUp() throws Exception
   {
-    database_tester = new JdbcDatabaseTester("com.mysql.jdbc.Driver",
-                                            "jdbc:mysql://localhost/cal",
-                                            "cal",
-                                            "cal",
-                                            "cal");
-    database_tester.setDataSet(getDataSet());
-    DatabaseConfig config = database_tester.getConnection().getConfig();
-    config.setProperty("http://www.dbunit.org/features/caseSensitiveTableNames", true);
 
+    // set up connection
+    dbtester = new JdbcDatabaseTester("com.mysql.jdbc.Driver",
+                                      "jdbc:mysql://localhost/cal",
+                                      "cal",
+                                      "cal");
+    //initialise dataset
+    IDataSet dataSet = getDataSet("dataset.xml");
+    dbtester.setDataSet(dataSet);
 
+    dbuconn = dbtester.getConnection();
+
+    // call default setUpOperation
+    DatabaseOperation.TRUNCATE_TABLE.execute(dbuconn, getDataSet("dataset.xml"));
+    dbtester.onSetup();
+
+    // reset registry aka database cache
     CalendarRegistry.eventBeans = null;
     CalendarRegistry.eventBeans = new ArrayList<Map<String, String>>();
 
     CalendarRegistry.guestBeans = null;
     CalendarRegistry.guestBeans = new ArrayList<Map<String, String>>();
+  }
 
+  @After
+  public void tearDown() throws Exception
+  {
+    dbtester.onTearDown();
+  }
 
-    database_tester.onSetup();
+  protected IDataSet getDataSet(String f) throws Exception
+  {
+    return
+      new FlatXmlDataSetBuilder().build(
+        new FileInputStream(path + f));
   }
 
 
@@ -81,16 +99,6 @@ public class TestRegistry
   @Test
   public void test_addEventBeans() throws SQLException
   {
-    // use the function
-
-    CalendarRegistry.addEventBeans(Arrays.asList(5,1,3));
-
-
-    // capture side effect
-
-    List<Map<String, String>> result = CalendarRegistry.eventBeans;
-
-
     // expected value of CalendarRegistry.eventBeans
 
     Map<String, String> ev0 = new HashMap<String, String>();
@@ -121,6 +129,16 @@ public class TestRegistry
     ev2.put("kind",         "other");
     ev2.put("description",  "beginning of common era");
     ev2.put("guests",       "");
+
+
+    // use the function
+
+    CalendarRegistry.addEventBeans(Arrays.asList(5,1,3));
+
+
+    // capture side effect
+
+    List<Map<String, String>> result = CalendarRegistry.eventBeans;
 
 
     // will it blend?
@@ -180,7 +198,7 @@ public class TestRegistry
 
     /* capture side effect */
 
-    List<Map<String, String>> result = CalendarRegistry.guestBeans;
+    List<Map<String, String>> actual = CalendarRegistry.guestBeans;
 
 
     /* expected value of CalendarRegistry.GuestBeans */
@@ -205,8 +223,7 @@ public class TestRegistry
 
     /* will it blend? */
 
-    assertTrue(expected.toString().equals(
-               result.toString()));
+    assertTrue(String.format("expected: %s\nbut was: %s", expected, actual), expected.toString().equals(actual.toString()));
   }
 
 
