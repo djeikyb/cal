@@ -32,9 +32,9 @@ public class CalendarRegistry
    * Populate list of guest beans.
    * @throws SQLException
    */
-  public static void addGuestBeans(List<Integer> eids) throws SQLException
+  public static void addGuestBeans(List<Integer> gids) throws SQLException
   {
-    List<Map<String, String>> beanList = q.getRows("guests", eids);
+    List<Map<String, String>> beanList = q.getRows("guests", gids);
 
     for (Map<String, String> bean : beanList)
     {
