@@ -1,0 +1,29 @@
+<!ELEMENT dataset (
+    events*,
+    guests*,
+    test*)>
+
+<!ELEMENT events EMPTY>
+<!ATTLIST events
+    id CDATA #REQUIRED
+    day CDATA #IMPLIED
+    timeStart CDATA #IMPLIED
+    timeEnd CDATA #IMPLIED
+    kind CDATA #IMPLIED
+    description CDATA #IMPLIED
+    guests CDATA #IMPLIED
+>
+
+<!ELEMENT guests EMPTY>
+<!ATTLIST guests
+    id CDATA #REQUIRED
+    name CDATA #IMPLIED
+    email CDATA #IMPLIED
+>
+
+<!ELEMENT test EMPTY>
+<!ATTLIST test
+    id CDATA #REQUIRED
+    txt CDATA #IMPLIED
+>
+
