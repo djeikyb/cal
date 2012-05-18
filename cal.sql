@@ -29,3 +29,11 @@ create table guests
 
   primary key (id)
 );
+
+create table test
+(
+  id      double not null auto_increment,
+  txt     varchar (255),
+
+  primary key (id)
+);
