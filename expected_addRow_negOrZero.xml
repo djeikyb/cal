@@ -1,4 +1,31 @@
 <?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE dataset [
+  <!ELEMENT dataset (
+      events*,
+      guests*,
+      test*)>
+  <!ELEMENT events EMPTY>
+  <!ATTLIST events
+      id CDATA #REQUIRED
+      day CDATA #IMPLIED
+      timeStart CDATA #IMPLIED
+      timeEnd CDATA #IMPLIED
+      kind CDATA #IMPLIED
+      description CDATA #IMPLIED
+      guests CDATA #IMPLIED
+  >
+  <!ELEMENT guests EMPTY>
+  <!ATTLIST guests
+      id CDATA #REQUIRED
+      name CDATA #IMPLIED
+      email CDATA #IMPLIED
+  >
+  <!ELEMENT test EMPTY>
+  <!ATTLIST test
+      id CDATA #REQUIRED
+      txt CDATA #IMPLIED
+  >
+]>
 <dataset>
   <events id="1" day="" timeStart="" timeEnd="" kind="" description="" guests=""/>
   <events id="2" day="2012-10-31" timeStart="" timeEnd="" kind="holiday" description="halloween" guests=""/>
@@ -9,6 +36,7 @@
   <events id="7" day="2012-05-13" timeStart="" timeEnd="" kind="holiday" description="mother&apos;s day" guests=""/>
   <events id="8" day="2012-05-28" timeStart="" timeEnd="" kind="holiday" description="memorial day" guests=""/>
   <events id="9" day="2012-10-01" timeStart="" timeEnd="" kind="" description="" guests=""/>
+  <events id="10"/>
   <guests id="1.0" name=" null 0m*[2~*[2~*[2~*l*OQ0&apos;s&apos;S&apos;F2498 7*[5~*[3~*[4~df asdf[sd fw erfj203409faf; dsf;lsk dfas;df j2-sa;fsdf s&quot;i$(*%$R*$#(*R $(*R@J#R*@R$# R( $#*) $ R@# R$($* R(i   &quot;&quot;&quot;j;sdf asdfasfsadfs m1f93mf 933f134- f4398 `9t834p14-r039qtp3pq38t1tp3tq3 pgjasd;lfksdj fas" email="foo@bar.biz"/>
   <guests id="2.0" name="Moon Unit" email="lazers@zappa.fam"/>
   <guests id="3.0" name="Dweezil" email="bugs@zappa.fam"/>
