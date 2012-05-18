@@ -22,6 +22,8 @@ import org.junit.Before;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
+import static org.junit.Assert.*;
+import static org.hamcrest.core.Is.is;
 
 public class TestQuery
 {
@@ -85,10 +87,9 @@ public class TestQuery
   public void test_getEventsThis_mayo() throws SQLException
   {
     List<Integer> expected = Arrays.asList(5,6);
-    List<Integer> result = q.getEvents_this("2012-05-05");
+    List<Integer> actual = q.getEvents_this("2012-05-05");
 
-    assertTrue(expected.toString().equals(
-               result.toString()));
+    assertThat(actual, is(expected));
   }
 
   @Test
@@ -97,10 +98,9 @@ public class TestQuery
     List<String> days = Arrays.asList("0000-00-00","2012-05-28");
 
     List<Integer> expected = Arrays.asList(3,8);
-    List<Integer> result = q.getEvents_these(days);
+    List<Integer> actual = q.getEvents_these(days);
 
-    assertTrue(expected.toString().equals(
-               result.toString()));
+    assertThat(actual, is(expected));
   }
 
   @Test
@@ -113,16 +113,15 @@ public class TestQuery
       "halloween",
       "cinco de mayo happy hour",
       "memorial day");
-    List<String> result = q.getDescriptions(eids);
+    List<String> actual = q.getDescriptions(eids);
 
-    assertTrue(expected.toString().equals(
-               result.toString()));
+    assertThat(actual, is(expected));
   }
 
   @Test
   public void test_getRows_single() throws SQLException
   {
-    List<Map<String, String>> result = q.getRows("events", Arrays.asList(5));
+    List<Map<String, String>> actual = q.getRows("events", Arrays.asList(5));
     List<Map<String, String>> expected = new ArrayList<Map<String, String>>();
 
     Map<String, String> foo = new HashMap<String, String>();
@@ -135,14 +134,13 @@ public class TestQuery
       foo.put("guests",       "");
     expected.add(foo);
 
-    assertTrue(expected.toString().equals(
-               result.toString()));
+    assertThat(actual, is(expected));
   }
 
   @Test
   public void test_getRows_multiple() throws SQLException
   {
-    List<Map<String, String>> result = q.getRows("events", Arrays.asList(5,1,3));
+    List<Map<String, String>> actual = q.getRows("events", Arrays.asList(5,1,3));
 
     Map<String, String> foo = new HashMap<String, String>();
     Map<String, String> foobar = new HashMap<String, String>();
@@ -173,8 +171,7 @@ public class TestQuery
     foobar.put("description",  "beginning of common era");
     foobar.put("guests",       "");
 
-    assertTrue(expected.toString().equals(
-               result.toString()));
+    assertThat(actual, is(expected));
   }
 
   @Test
@@ -183,7 +180,7 @@ public class TestQuery
     Integer actual = q.maxId("events");
     Integer expected = 9;
 
-    assertTrue(String.format("expected %s, but was %s", expected, actual), actual.toString().equals(expected.toString()));
+    assertThat(actual, is(expected));
   }
 
   @Test
@@ -192,7 +189,7 @@ public class TestQuery
     Integer actual = q.nextId("events");
     Integer expected = 10;
 
-    assertTrue(String.format("expected %s, but was %s", expected, actual), actual.toString().equals(expected.toString()));
+    assertThat(actual, is(expected));
   }
 
 }
