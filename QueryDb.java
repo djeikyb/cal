@@ -99,7 +99,27 @@ public class QueryDb
     return ps.executeQuery().next();
   }
 
+  /**
+   *  Returns the max id. Useful for determining what the nex auto incremented
+   *  will be.
+   * @throws SQLException 
+   */
+  public Integer maxId(String table) throws SQLException
+  {
 
+
+      ps = conn.prepareStatement(
+        String.format("select max(id) from %s", table));
+
+      rs = ps.executeQuery();
+      rs.next();
+      return rs.getInt(1);
+  }
+
+  public Integer nextId(String table) throws SQLException
+  {
+    return maxId(table) + 1;
+  }
 
 //------------------------------------------------------------------------------
 //  event table queries
