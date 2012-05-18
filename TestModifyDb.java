@@ -121,34 +121,6 @@ public class TestModifyDb
     Assertion.assertEquals(expectedTable, actualTable);
   }
 
-/*
-  @Test
-  public void test_addRow_neg() throws Exception
-  {
-    // expected table values
-
-    IDataSet expectedDs = getDataSet("expected_addRow_negOrZero.xml");
-    ITable expectedTable = expectedDs.getTable("events");
-
-
-    // use the function
-
-    mod.addRow("events", "id", -1);
-
-
-    // capture side effects
-
-    IDataSet actualDs = dbuconn.createDataSet();
-    ITable actualTable = actualDs.getTable("events");
-    Integer actualTable.getValue(
-
-
-    // will it blend?
-
-    Assertion.assertEquals(expectedTable, actualTable);
-  }
-*/
-
   @Test
   public void test_modRow_newRow() throws Exception
   {
@@ -181,7 +153,35 @@ public class TestModifyDb
     // will it blend?
 
     Assertion.assertEquals(expectedTable, actualTable);
+  }
 
+  @Test
+  public void test_modRow_update() throws Exception
+  {
+    // expected table values
+
+    IDataSet expectedDs = getDataSet("expected_modRow_update.xml");
+    ITable expectedTable = expectedDs.getTable("events");
+
+
+    // use the function
+
+    Event e = new Event();
+    e.setId("3");
+    e.setTimeStart("00:00");
+
+    mod.modRow("events", e.getLol());
+
+
+    // capture side effects
+
+    IDataSet actualDs = dbuconn.createDataSet();
+    ITable actualTable = actualDs.getTable("events");
+
+
+    // will it blend?
+
+    Assertion.assertEquals(expectedTable, actualTable);
   }
 
 }
