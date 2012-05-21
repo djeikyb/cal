@@ -1,12 +1,46 @@
+p = /opt
+
+dbunit_home := $(p)/dbunit
+junit_home  := $(p)/junit
+mysqlj_home := $(p)/mysqlj
+slf4j_home  := $(p)/slf4j
+sqlite_home := $(p)/sqlite
+
+
+dbunit_jar    := $(dbunit_home)/dbunit-2.4.8.jar
+junit_jar     := $(junit_home)/junit-4.10.jar
+mysql_jar     := $(mysqlj_home)/mysql-connector-java-5.1.20-bin.jar
+slf4j_api_jar := $(slf4j_home)/slf4j-api-1.6.4.jar
+slf4j_nop_jar := $(slf4j_home)/slf4j-nop-1.6.4.jar
+sqlite_jar    := $(sqlite_home)/sqlite.jar
+
+class_path := .:$(junit_jar):$(dbunit_jar):$(slf4j_api_jar):$(slf4j_nop_jar):$(mysql_jar)
+
+
+flags := "-Xlint:unchecked"
+
+
 package:
 	perl -pi -w -e 's:^//package:package:' *java
 
 unpackage:
 	perl -pi -w -e 's:^package gps://package gps:' *java
 
-tests: TestQuery.java
-	javac -Xlint:unchecked TestQuery.java && \
-	java org.junit.runner.JUnitCore TestQuery
+tm: TestModify.java
+	javac -Xlint:unchecked -cp $(class_path) TestModify.java && \
+	java -cp $(class_path) org.junit.runner.JUnitCore TestModify | grep -v "at org.junit"
+
+tr: TestRegistry.java
+	javac -Xlint:unchecked -cp $(class_path) TestRegistry.java && \
+	java -cp $(class_path) org.junit.runner.JUnitCore TestRegistry | grep -v "at org.junit"
+
+tq: TestQuery.java
+	javac -Xlint:unchecked -cp $(class_path) TestQuery.java && \
+	java -cp $(class_path) org.junit.runner.JUnitCore TestQuery | grep -v "at org.junit"
+
+gc: GimmeConn.java
+	javac $(flags) -cp $(class_path) GimmeConn.java
+	java -cp $(class_path) GimmeConn
 
 clean:
 	rm *.class
