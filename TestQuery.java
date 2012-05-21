@@ -86,8 +86,9 @@ public class TestQuery
   @Test
   public void test_getEventsThis_mayo() throws SQLException
   {
-    List<Integer> expected = Arrays.asList(5,6);
     List<Integer> actual = q.getEvents_this("2012-05-05");
+
+    List<Integer> expected = Arrays.asList(5,6);
 
     assertThat(actual, is(expected));
   }
@@ -95,10 +96,56 @@ public class TestQuery
   @Test
   public void test_getEventsThese_twoDays() throws SQLException
   {
+    // actual
+
     List<String> days = Arrays.asList("0000-00-00","2012-05-28");
+    List<Integer> actual = q.getEvents_these(days);
+
+
+    // expected
 
     List<Integer> expected = Arrays.asList(3,8);
+
+
+    // test
+
+    assertThat(actual, is(expected));
+  }
+
+  @Test
+  public void test_getEventsThese_mayo() throws SQLException
+  {
+    // actual
+
+    List<String> days = Arrays.asList("2012-05-05");
     List<Integer> actual = q.getEvents_these(days);
+
+
+    // expected
+
+    List<Integer> expected = Arrays.asList(5,6);
+
+
+    // test
+
+    assertThat(actual, is(expected));
+  }
+
+  @Test
+  public void test_getEventsThese_noEvent() throws SQLException
+  {
+    // actual
+
+    List<String> days = Arrays.asList("0000-00-01");
+    List<Integer> actual = q.getEvents_these(days);
+
+
+    // expected
+
+    List<Integer> expected = Arrays.asList();
+
+
+    // test
 
     assertThat(actual, is(expected));
   }
@@ -106,14 +153,22 @@ public class TestQuery
   @Test
   public void test_getDescriptions() throws SQLException
   {
+    // actual
+
     List<Integer> eids = Arrays.asList(1, 2, 5, 8);
+    List<String> actual = q.getDescriptions(eids);
+
+
+    // expected
 
     List<String> expected = Arrays.asList(
       "",
-      "halloween",
+      "all hallows eve, when ghouls moan and banshees scream and children become the monsters under their beds",
       "cinco de mayo happy hour",
       "memorial day");
-    List<String> actual = q.getDescriptions(eids);
+
+
+    // test
 
     assertThat(actual, is(expected));
   }
@@ -121,8 +176,14 @@ public class TestQuery
   @Test
   public void test_getRows_single() throws SQLException
   {
-    List<Map<String, String>> actual = q.getRows("events", Arrays.asList(5));
-    List<Map<String, String>> expected = new ArrayList<Map<String, String>>();
+    // actual
+
+    Map<Integer, Map<String, String>> actual = q.getRows("events", Arrays.asList(5));
+
+
+    // expected
+
+    Map<Integer, Map<String, String>> expected = new HashMap<Integer, Map<String, String>>();
 
     Map<String, String> foo = new HashMap<String, String>();
       foo.put("id",           "5");
@@ -132,7 +193,10 @@ public class TestQuery
       foo.put("kind",         "other");
       foo.put("description",  "cinco de mayo happy hour");
       foo.put("guests",       "");
-    expected.add(foo);
+    expected.put(5, foo);
+
+
+    // test
 
     assertThat(actual, is(expected));
   }
@@ -140,12 +204,18 @@ public class TestQuery
   @Test
   public void test_getRows_multiple() throws SQLException
   {
-    List<Map<String, String>> actual = q.getRows("events", Arrays.asList(5,1,3));
+    // actual
+
+    Map<Integer, Map<String, String>> actual = q.getRows("events", Arrays.asList(5,1,3));
+
+
+    // expected
+
+    Map<Integer, Map<String, String>> expected = new HashMap<Integer, Map<String, String>>();
 
     Map<String, String> foo = new HashMap<String, String>();
     Map<String, String> foobar = new HashMap<String, String>();
     Map<String, String> bar = new HashMap<String, String>();
-    List<Map<String, String>> expected = Arrays.asList(foo, bar, foobar);
 
     foo.put("id",           "5");
     foo.put("day",          "2012-05-05");
@@ -154,6 +224,7 @@ public class TestQuery
     foo.put("kind",         "other");
     foo.put("description",  "cinco de mayo happy hour");
     foo.put("guests",       "");
+    expected.put(5, foo);
 
     bar.put("id",           "1");
     bar.put("day",          "");
@@ -162,6 +233,7 @@ public class TestQuery
     bar.put("kind",         "");
     bar.put("description",  "");
     bar.put("guests",       "");
+    expected.put(1, bar);
 
     foobar.put("id",           "3");
     foobar.put("day",          "0000-00-00");
@@ -170,6 +242,10 @@ public class TestQuery
     foobar.put("kind",         "other");
     foobar.put("description",  "beginning of common era");
     foobar.put("guests",       "");
+    expected.put(3, foobar);
+
+
+    // test
 
     assertThat(actual, is(expected));
   }
@@ -178,6 +254,7 @@ public class TestQuery
   public void test_maxId() throws SQLException
   {
     Integer actual = q.maxId("events");
+
     Integer expected = 9;
 
     assertThat(actual, is(expected));
@@ -187,6 +264,7 @@ public class TestQuery
   public void test_nextId() throws SQLException
   {
     Integer actual = q.nextId("events");
+
     Integer expected = 10;
 
     assertThat(actual, is(expected));
