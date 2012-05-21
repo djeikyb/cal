@@ -11,8 +11,8 @@ public class CalendarRegistry
 {
   static QueryDb q = new QueryDb();
 
-  static List<Map<String, String>> eventBeans = new ArrayList<Map<String, String>>();
-  static List<Map<String, String>> guestBeans = new ArrayList<Map<String, String>>();
+  static Map<Integer, Map<String, String>> eventBeans = new HashMap<Integer, Map<String, String>>();
+  static Map<Integer, Map<String, String>> guestBeans = new HashMap<Integer, Map<String, String>>();
 
   /**
    * Populate list of event beans.
@@ -20,12 +20,9 @@ public class CalendarRegistry
    */
   public static void addEventBeans(List<Integer> eids) throws SQLException
   {
-    List<Map<String, String>> beanList = q.getRows("events", eids);
+    Map<Integer, Map<String, String>> beanMom = q.getRows("events", eids);
 
-    for (Map<String, String> bean : beanList)
-    {
-      eventBeans.add(bean);
-    }
+    eventBeans.putAll(beanMom);
   }
 
   /**
@@ -53,8 +50,17 @@ public class CalendarRegistry
     List<Integer> eids = new ArrayList<Integer>();
   }
 
-  public static void main(String[] args)
+  /**
+  public static Map<Integer, String> getEventTaglines(List<Integer> eids)
   {
-    refreshEventBeans();
+    Map<String, String> taglines = new HashMap<String, String>();
+
+    for (id : eids)
+    {
+      
+    }
+
   }
+   */
+
 }
