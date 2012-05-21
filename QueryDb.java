@@ -46,7 +46,7 @@ public class QueryDb
    * @return      ArrayList
    * @throws SQLException
    */
-  private List<Integer> resultInt(ResultSet rs, String col) throws SQLException
+  private List<Integer> resultInt(ResultSet rs, String col) throws SQLException//{{{
   {
     List<Integer> r = new ArrayList<Integer>();
 
@@ -56,7 +56,7 @@ public class QueryDb
     }
 
     return r;
-  }
+  }//}}}
 
   /**
    * Converts a column of a ResultSet to a list of Strings
@@ -65,7 +65,7 @@ public class QueryDb
    * @return      ArrayList
    * @throws SQLException
    */
-  private List<String> resultStr(ResultSet rs, String col) throws SQLException
+  private List<String> resultStr(ResultSet rs, String col) throws SQLException//{{{
   {
     List<String> r = new ArrayList<String>();
 
@@ -75,7 +75,7 @@ public class QueryDb
     }
 
     return r;
-  }
+  }//}}}
 
 
 //------------------------------------------------------------------------------
@@ -90,21 +90,21 @@ public class QueryDb
    *  @return
    *  @throws SQLException
    */
-  public boolean keyExists(String table, String keyName, Integer keyValue) throws SQLException
+  public boolean keyExists(String table, String keyName, Integer keyValue) throws SQLException//{{{
   {
     ps = conn.prepareStatement(
       String.format("select %s from %s where %s = ?", keyName, table, keyName));
     ps.setInt(1, keyValue);
 
     return ps.executeQuery().next();
-  }
+  }//}}}
 
   /**
-   *  Returns the max id. Useful for determining what the nex auto incremented
+   *  Returns the max id. Useful for determining what the next auto incremented
    *  will be.
    * @throws SQLException 
    */
-  public Integer maxId(String table) throws SQLException
+  public Integer maxId(String table) throws SQLException//{{{
   {
 
 
@@ -114,19 +114,22 @@ public class QueryDb
       rs = ps.executeQuery();
       rs.next();
       return rs.getInt(1);
-  }
+  }//}}}
 
-  public Integer nextId(String table) throws SQLException
+  /**
+   *  Returns the next id. Presuming column id is auto-incremented.
+   */
+  public Integer nextId(String table) throws SQLException//{{{
   {
     return maxId(table) + 1;
-  }
+  }//}}}
 
   /**
    * @param table   table to get data from
    * @param ids     list of primary keys for table
    * @return        a list of maps, each representing a row
    */
-  public Map<Integer, Map<String, String>> getRows(String table, List<Integer> ids) throws SQLException
+  public Map<Integer, Map<String, String>> getRows(String table, List<Integer> ids) throws SQLException//{{{
   {
     Map<Integer, Map<String, String>> rowMap = new HashMap<Integer, Map<String, String>>();
 
@@ -162,16 +165,12 @@ public class QueryDb
         row.put(column, rs.getString(column));
       }
 
-
-  // TODO: fix tests now that we build MoM not LoM
-
-
       // add row to list of rows
       rowMap.put(id, row);
     }
 
     return rowMap;
-  }
+  }//}}}
 
 
 
@@ -179,16 +178,23 @@ public class QueryDb
 //  event table queries
 //------------------------------------------------------------------------------
 
-  public List<Integer> getEvents_this(String day) throws SQLException
+  public List<Integer> getEvents_this(String day) throws SQLException//{{{
   {
     ps = conn.prepareStatement(
       "select id from events where day = ?");
     ps.setString(1, day);
 
     return resultInt(ps.executeQuery(), "id");
-  }
+  }//}}}
 
-  public List<Integer> getEvents_these(List<String> days) throws SQLException
+  /**
+   *  Returns list of event ids. If no events exist are found for the days,
+   *  return an empty list.
+   *
+   *  @param days   list of days to check events for
+   *  @throws SQLException
+   */
+  public List<Integer> getEvents_these(List<String> days) throws SQLException//{{{
   {
     List<Integer> result = new ArrayList<Integer>();
 
@@ -199,14 +205,16 @@ public class QueryDb
     {
       ps.setString(1, day);
       rs = ps.executeQuery();
-      rs.next();
-      result.add(rs.getInt(1));
+      while (rs.next())
+      {
+        result.add(rs.getInt(1));
+      }
     }
 
     return result;
-  }
-/*{{{*/
-  public List<String> getDescriptions(List<Integer> eids) throws SQLException
+  }//}}}
+
+  public List<String> getDescriptions(List<Integer> eids) throws SQLException//{{{
   {
     // TODO: try without = new, see if can avoid imposing a list type
     List<String> result = new ArrayList<String>();
@@ -223,10 +231,9 @@ public class QueryDb
     }
 
     return result;
-  }
+  }//}}}
 
 
-/*}}}*/
 //------------------------------------------------------------------------------
 //  guest table queries
 //------------------------------------------------------------------------------
