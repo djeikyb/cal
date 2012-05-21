@@ -121,70 +121,20 @@ public class QueryDb
     return maxId(table) + 1;
   }
 
-//------------------------------------------------------------------------------
-//  event table queries
-//------------------------------------------------------------------------------
-
-  public List<Integer> getEvents_this(String day) throws SQLException
-  {
-    ps = conn.prepareStatement(
-      "select id from events where day = ?");
-    ps.setString(1, day);
-
-    return resultInt(ps.executeQuery(), "id");
-  }
-
-  public List<Integer> getEvents_these(List<String> days) throws SQLException
-  {
-    List<Integer> result = new ArrayList<Integer>();
-
-    ps = conn.prepareStatement(
-      "select id from events where day = ?");
-
-    for (String date : days)
-    {
-      ps.setString(1, date);
-      rs = ps.executeQuery();
-      rs.next();
-      result.add(rs.getInt(1));
-    }
-
-    return result;
-  }
-
-  public List<String> getDescriptions(List<Integer> eids) throws SQLException
-  {
-    // TODO: try without = new, see if can avoid imposing a list type
-    List<String> result = new ArrayList<String>();
-
-    ps = conn.prepareStatement(
-      "select description from events where id = ?");
-
-    for (Integer id : eids)
-    {
-      ps.setInt(1, id);
-      rs = ps.executeQuery();
-      rs.next();
-      result.add(rs.getString("description"));
-    }
-
-    return result;
-  }
-
   /**
    * @param table   table to get data from
    * @param ids     list of primary keys for table
    * @return        a list of maps, each representing a row
    */
-  public List<Map<String, String>> getRows(String table, List<Integer> ids) throws SQLException
+  public Map<Integer, Map<String, String>> getRows(String table, List<Integer> ids) throws SQLException
   {
-    List<Map<String, String>> rowList = new ArrayList<Map<String, String>>();
+    Map<Integer, Map<String, String>> rowMap = new HashMap<Integer, Map<String, String>>();
 
     // gets data from a single row
     ps = conn.prepareStatement(
       String.format("select * from %s where id = ?", table));
 
-    // generate the maps for rowList
+    // generate the maps for rowMap
     for (Integer id : ids)
     {
       ResultSetMetaData rsmd;
@@ -212,19 +162,78 @@ public class QueryDb
         row.put(column, rs.getString(column));
       }
 
+
+  // TODO: fix tests now that we build MoM not LoM
+
+
       // add row to list of rows
-      rowList.add(row);
+      rowMap.put(id, row);
     }
 
-
-    return rowList;
+    return rowMap;
   }
 
 
 
 //------------------------------------------------------------------------------
+//  event table queries
+//------------------------------------------------------------------------------
+
+  public List<Integer> getEvents_this(String day) throws SQLException
+  {
+    ps = conn.prepareStatement(
+      "select id from events where day = ?");
+    ps.setString(1, day);
+
+    return resultInt(ps.executeQuery(), "id");
+  }
+
+  public List<Integer> getEvents_these(List<String> days) throws SQLException
+  {
+    List<Integer> result = new ArrayList<Integer>();
+
+    ps = conn.prepareStatement(
+      "select id from events where day = ?");
+
+    for (String day : days)
+    {
+      ps.setString(1, day);
+      rs = ps.executeQuery();
+      rs.next();
+      result.add(rs.getInt(1));
+    }
+
+    return result;
+  }
+/*{{{*/
+  public List<String> getDescriptions(List<Integer> eids) throws SQLException
+  {
+    // TODO: try without = new, see if can avoid imposing a list type
+    List<String> result = new ArrayList<String>();
+
+    ps = conn.prepareStatement(
+      "select description from events where id = ?");
+
+    for (Integer id : eids)
+    {
+      ps.setInt(1, id);
+      rs = ps.executeQuery();
+      rs.next();
+      result.add(rs.getString("description"));
+    }
+
+    return result;
+  }
+
+
+/*}}}*/
+//------------------------------------------------------------------------------
 //  guest table queries
 //------------------------------------------------------------------------------
+
+// shouldn't need any? does user ever request something specific about guests?
+// my thinking so far is that a user only ever asks to see guests of an event,
+// or a list of all the guests
 
 
 }
