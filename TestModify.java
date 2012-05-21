@@ -33,14 +33,14 @@ import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
-public class TestModifyDb
+public class TestModify
 {
 
 /*  Pick a working directory
   private String path = "src/gps/tasks/task3663/";  // eclipse
   private String path = "";                         // make
 */
-  private String path = "src/gps/tasks/task3663/";  // eclipse
+  private String path = "";                         // make
 
 //------------------------------------------------------------------------------
 //  Setup
