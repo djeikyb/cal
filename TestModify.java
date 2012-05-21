@@ -40,7 +40,7 @@ public class TestModify
   private String path = "src/gps/tasks/task3663/";  // eclipse
   private String path = "";                         // make
 */
-  private String path = "";                         // make
+  private String path = "src/gps/tasks/task3663/";  // eclipse
 
 //------------------------------------------------------------------------------
 //  Setup
@@ -133,7 +133,6 @@ public class TestModify
     // use the function
 
     Event e = new Event();
-    e.setId("-1");
     e.setDay("2012-12-31");
     e.setTimeStart("");
     e.setTimeEnd("");
@@ -141,7 +140,7 @@ public class TestModify
     e.setDescription("end of the world");
     e.setGuests("");
 
-    mod.modRow("events", e.getLol());
+    mod.modRow("events", e.getBean());
 
 
     // capture side effects
@@ -170,7 +169,7 @@ public class TestModify
     e.setId("3");
     e.setTimeStart("00:00");
 
-    mod.modRow("events", e.getLol());
+    mod.modRow("events", e.getBean());
 
 
     // capture side effects

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class ModifyDb
 {
@@ -66,20 +67,19 @@ public class ModifyDb
 
 
   /**
-   * Add data (from a bean) to a row in a table. The row will be created if it
-   * doesn't exist.
-   * @param table
-   * @param lolcols   list of column/value pairs
-   * @throws SQLException
+   *  Add data (from a bean) to a row in a table. The row will be created if it
+   *  doesn't exist.
+   *
+   *  @param table
+   *  @param bean   map of column/value pairs
+   *  @throws SQLException
    */
-  public void modRow(String table, ArrayList<ArrayList<String>> lolcols) throws SQLException//{{{
+  public void modRow(String table, Map<String, String> bean) throws SQLException//{{{
   {
-    // get primary key, then remove it from list
-    String pkName = lolcols.get(0).get(0);
-// TODO someday this will go horribly wrong because nothing as of 2012-05-16
-// ensures that this string represents an Integer
-    Integer pkValue = Integer.valueOf(lolcols.get(0).get(1));
-    lolcols.remove(0);
+    // get primary key, then remove it from map
+    String pkName = "id";
+    Integer pkValue = Integer.valueOf(bean.get("id"));
+    bean.remove("id");
 
     // if primary key isn't in table, add it
     if (!qry.keyExists(table, pkName, pkValue))
@@ -88,16 +88,13 @@ public class ModifyDb
       pkValue = qry.maxId(table);
     }
 
-    // loop through list, updating column/value pairs
-    for (ArrayList<String> list : lolcols)
+    // loop through map, updating column/value pairs
+    for (String key : bean.keySet())
     {
-      String colName = list.get(0);
-      String colVal = list.get(1);
-
       ps = conn.prepareStatement(
-        String.format("update %s set %s = ? ", table, colName) +
+        String.format("update %s set %s = ? ", table, key) +
         String.format("where %s = ?", pkName));
-      ps.setString(1, colVal);
+      ps.setString(1, bean.get(key));
       ps.setInt(2, pkValue);
 
       ps.executeUpdate();

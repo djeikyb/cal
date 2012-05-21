@@ -2,6 +2,8 @@ package gps.tasks.task3663;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Event
 {
@@ -29,40 +31,29 @@ public class Event
 
 
 //------------------------------------------------------------------------------
-// lol getter
+// bean getter
 //------------------------------------------------------------------------------
 
-  /**
-   *  get all bean attributes as a list-of-list
-   */
-  public ArrayList<ArrayList<String>> getLol()
+  public Map<String, String> getBean()
   {
-    ArrayList<ArrayList<String>> lol = new ArrayList<ArrayList<String>>();
+    Map<String, String> bean = new HashMap<String, String>();
 
-    lol.add(new ArrayList<String>(Arrays.asList("id",           getId())));
-    lol.add(new ArrayList<String>(Arrays.asList("day",          getDay())));
-    lol.add(new ArrayList<String>(Arrays.asList("timeStart",    getTimeStart())));
-    lol.add(new ArrayList<String>(Arrays.asList("timeEnd",      getTimeEnd())));
-    lol.add(new ArrayList<String>(Arrays.asList("kind",         getKind())));
-    lol.add(new ArrayList<String>(Arrays.asList("description",  getDescription())));
-    lol.add(new ArrayList<String>(Arrays.asList("guests",       getGuests())));
+    bean.put("id",           getId());
+    bean.put("day",          getDay());
+    bean.put("timeStart",    getTimeStart());
+    bean.put("timeEnd",      getTimeEnd());
+    bean.put("kind",         getKind());
+    bean.put("description",  getDescription());
+    bean.put("guests",       getGuests());
 
-    return lol;
+    return bean;
   }
-
 
 
 //------------------------------------------------------------------------------
 // getters and setters
 //------------------------------------------------------------------------------
 
-/*
- *
- * shouldn't ever need these. no-one should ever be setting the id in an event
- * object. in fact, the only thing that should ever set the id is the database,
- * and even that uses the bean from the registry, not directly this object.
- *
- *
   public String getId()
   {
     return id;
@@ -72,7 +63,6 @@ public class Event
   {
     this.id = id;
   }
-*/
 
   public String getDay()
   {
