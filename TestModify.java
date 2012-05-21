@@ -91,13 +91,13 @@ public class TestModify
 //------------------------------------------------------------------------------
 
   @Test (expected = SQLException.class)
-  public void test_addRow_duplicate() throws SQLException
+  public void test_addRow_duplicate() throws SQLException//{{{
   {
     mod.addRow("events", "id", 2);
-  }
+  }//}}}
 
   @Test
-  public void test_addRow_newRow() throws Exception
+  public void test_addRow_newRow() throws Exception//{{{
   {
     // expected table values
 
@@ -119,10 +119,10 @@ public class TestModify
     // will it blend?
 
     Assertion.assertEquals(expectedTable, actualTable);
-  }
+  }//}}}
 
   @Test
-  public void test_modRow_newRow() throws Exception
+  public void test_modRow_newRow() throws Exception//{{{
   {
     // expected table values
 
@@ -153,10 +153,10 @@ public class TestModify
     // will it blend?
 
     Assertion.assertEquals(expectedTable, actualTable);
-  }
+  }//}}}
 
   @Test
-  public void test_modRow_update() throws Exception
+  public void test_modRow_update() throws Exception//{{{
   {
     // expected table values
 
@@ -182,6 +182,6 @@ public class TestModify
     // will it blend?
 
     Assertion.assertEquals(expectedTable, actualTable);
-  }
+  }//}}}
 
 }

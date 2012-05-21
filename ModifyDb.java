@@ -43,7 +43,7 @@ public class ModifyDb
    * @param keyValue  primary key valueue
    * @throws SQLException
    */
-  public void addRow(String table, String keyName, Integer keyValue) throws SQLException
+  public void addRow(String table, String keyName, Integer keyValue) throws SQLException//{{{
   {
     if (keyValue < 0)
     {
@@ -62,7 +62,7 @@ public class ModifyDb
     ps.setInt(1, keyValue);
 
     ps.executeUpdate();
-  }
+  }//}}}
 
 
   /**
@@ -72,7 +72,7 @@ public class ModifyDb
    * @param lolcols   list of column/value pairs
    * @throws SQLException
    */
-  public void modRow(String table, ArrayList<ArrayList<String>> lolcols) throws SQLException
+  public void modRow(String table, ArrayList<ArrayList<String>> lolcols) throws SQLException//{{{
   {
     // get primary key, then remove it from list
     String pkName = lolcols.get(0).get(0);
@@ -102,7 +102,7 @@ public class ModifyDb
 
       ps.executeUpdate();
     }
-  }
+  }//}}}
 
 
 }
