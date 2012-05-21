@@ -68,6 +68,24 @@ public class CalendarRegistry
   }//}}}
 
   /**
+   *  Updates list of event beans with any it doesn't have.
+   *
+   *  @param eids   list of event ids
+   * @throws SQLException
+   */
+  public static void updateEventBeans(List<Integer> eids) throws SQLException//{{{
+  {
+    // find any "unregistered" eids
+    List<Integer> missing = unregEvents(eids);
+
+    //  if there were any missing, hit the db and add them
+    if (!missing.isEmpty())
+    {
+      fetchEvents(missing);
+    }
+  }//}}}
+
+  /**
    *  Returns a map of (eid, 50-char description).
    *
    *  @param eids   List of event ids to make taglines from
@@ -139,24 +157,6 @@ public class CalendarRegistry
     }
 
     return dates;
-  }//}}}
-
-  /**
-   *  Updates list of event beans with any it doesn't have.
-   *
-   *  @param eids   list of event ids
-   * @throws SQLException
-   */
-  public static void updateEventBeans(List<Integer> eids) throws SQLException//{{{
-  {
-    // find any "unregistered" eids
-    List<Integer> missing = unregEvents(eids);
-
-    //  if there were any missing, hit the db and add them
-    if (!missing.isEmpty())
-    {
-      fetchEvents(missing);
-    }
   }//}}}
 
   /**
