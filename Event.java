@@ -56,6 +56,13 @@ public class Event
 // getters and setters
 //------------------------------------------------------------------------------
 
+/*
+ *
+ * shouldn't ever need these. no-one should ever be setting the id in an event
+ * object. in fact, the only thing that should ever set the id is the database,
+ * and even that uses the bean from the registry, not directly this object.
+ *
+ *
   public String getId()
   {
     return id;
@@ -65,7 +72,7 @@ public class Event
   {
     this.id = id;
   }
-
+*/
 
   public String getDay()
   {
