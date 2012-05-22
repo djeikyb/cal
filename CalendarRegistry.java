@@ -15,6 +15,7 @@ import org.joda.time.LocalDate;
 public class CalendarRegistry
 {
   static QueryDb q = new QueryDb();
+  static ModifyDb mod = new ModifyDb();
 
   static Map<Integer, Map<String, String>> eventBeans = new HashMap<Integer, Map<String, String>>();
   static Map<Integer, Map<String, String>> guestBeans = new HashMap<Integer, Map<String, String>>();
@@ -44,6 +45,33 @@ public class CalendarRegistry
 
     guestBeans.putAll(beanMom);
   }//}}}
+
+  /**
+   *  Sends bean to db.
+   *
+   *  @param type   type of bean: guest || event
+   *  @param bean   bean to save
+   *  @throws SQLException
+   */
+  public static void send(String type, Map<String, String> bean) throws SQLException//{{{
+  {
+    if      (type.equals("event"))  mod.modRow("events",  bean);
+    else if (type.equals("guest"))  mod.modRow("guests",  bean);
+    else                            mod.modRow(type,      bean);
+  }//}}}
+
+  /**
+   *  Composite method to send() bean to db, then fetchEvents() to update cache
+   *
+   *  @param type   type of bean: guest || event
+   *  @param bean   bean to save
+   *  @throws SQLException
+   */
+  public static void save(String type, Map<String, String> bean) throws SQLException
+  {
+    send(type, bean);
+    fetchEvents(Arrays.asList(Integer.valueOf(bean.get("id"))));
+  }
 
   /**
    *  Returns a list of "unregistered" event ids.

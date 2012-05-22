@@ -9,10 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dbunit.Assertion;
 import org.dbunit.IDatabaseTester;
 import org.dbunit.JdbcDatabaseTester;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.ITable;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 
@@ -26,7 +28,6 @@ import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.is;
 
 
-//@SuppressWarnings("unchecked")
 public class TestRegistry
 {
 
@@ -36,6 +37,8 @@ public class TestRegistry
 */
   private String path = "src/gps/tasks/task3663/";  // eclipse
 
+
+
 //------------------------------------------------------------------------------
 //  Setup
 //------------------------------------------------------------------------------
@@ -44,6 +47,13 @@ public class TestRegistry
   private Connection gconn = new GimmeConn().conn;
   private ModifyDb mod = new ModifyDb(gconn);
   IDatabaseConnection dbuconn;
+
+  protected IDataSet getDataSet(String f) throws Exception  //{{{
+  {
+    return
+      new FlatXmlDataSetBuilder().build(
+        new FileInputStream(path + f));
+  } //}}}
 
   @Before
   public void setUp() throws Exception  //{{{
@@ -76,13 +86,6 @@ public class TestRegistry
   public void tearDown() throws Exception //{{{
   {
     dbtester.onTearDown();
-  } //}}}
-
-  protected IDataSet getDataSet(String f) throws Exception  //{{{
-  {
-    return
-      new FlatXmlDataSetBuilder().build(
-        new FileInputStream(path + f));
   } //}}}
 
 
@@ -320,8 +323,8 @@ public class TestRegistry
 
     // will it blend?
 
-    assertThat(result, is(expected));//}}}
-  }
+    assertThat(result, is(expected));
+  }//}}}
 
   @Test
   public void test_getDatesInRange()//{{{
@@ -351,7 +354,7 @@ public class TestRegistry
   }//}}}
 
   @Test
-  public void test_eventDates() throws SQLException
+  public void test_eventDates() throws SQLException//{{{
   {
     // expected
 
@@ -372,10 +375,10 @@ public class TestRegistry
     // will it blend?
 
     assertThat(result, is(expected));
-  }
+  }//}}}
 
   @Test
-  public void test_updateEventBeans() throws SQLException
+  public void test_updateEventBeans() throws SQLException//{{{
   {
     // expected value of CalendarRegistry.eventBeans
 
@@ -430,7 +433,57 @@ public class TestRegistry
     // will it blend?
 
     assertThat(result, is(expected));
-  }
+  }//}}}
+
+  @Test
+  public void test_send_event() throws Exception//{{{
+  {
+    // expected table values
+
+    IDataSet expectedDs = getDataSet("expected_modRow_update.xml");
+    ITable expectedTable = expectedDs.getTable("events");
+
+
+    // use the function
+
+    Event e = new Event();
+    e.setId("3");
+    e.setTimeStart("00:00");
+
+    CalendarRegistry.send("event", e.getBean());
+
+
+    // capture side effects
+
+    IDataSet actualDs = dbuconn.createDataSet();
+    ITable actualTable = actualDs.getTable("events");
+
+
+    // will it blend?
+
+    Assertion.assertEquals(expectedTable, actualTable);
+  }//}}}
+
+  @Test
+  public void test_save_event() throws SQLException//{{{
+  {
+    // use the function
+
+    Event e = new Event();
+    e.setId("3");
+    e.setTimeStart("00:00");
+
+    CalendarRegistry.save("event", e.getBean());
+
+    /*
+     * test passes if nothing borks.
+     *
+     * i thought this test wasn't needed, but then i found a bug where
+     * ModifyDb.modRow() was abusing the bean pointer it gets; namely deleting
+     * the id. naturally this pissed off CalendarRegistry.send(), who gets a
+     * null pointer instead of the id it wants.
+     */
+  }//}}}
 
   @Test
   public void test_getEvent_noexist()
