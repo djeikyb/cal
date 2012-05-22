@@ -484,10 +484,4 @@ public class TestRegistry
      * null pointer instead of the id it wants.
      */
   }//}}}
-
-  @Test
-  public void test_getEvent_noexist()
-  {
-    assertTrue("Not sure I need to worry. Ui should only ask for an event that the registry has told it about.", false);
-  }
 }
