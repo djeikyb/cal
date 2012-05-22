@@ -5,6 +5,7 @@ junit_home  := $(p)/junit
 mysqlj_home := $(p)/mysqlj
 slf4j_home  := $(p)/slf4j
 sqlite_home := $(p)/sqlite
+joda_home   := $(p)/joda-time
 
 
 dbunit_jar    := $(dbunit_home)/dbunit-2.4.8.jar
@@ -13,8 +14,9 @@ mysql_jar     := $(mysqlj_home)/mysql-connector-java-5.1.20-bin.jar
 slf4j_api_jar := $(slf4j_home)/slf4j-api-1.6.4.jar
 slf4j_nop_jar := $(slf4j_home)/slf4j-nop-1.6.4.jar
 sqlite_jar    := $(sqlite_home)/sqlite.jar
+joda_jar      := $(joda_home)/joda-time-2.1.jar
 
-class_path := .:$(junit_jar):$(dbunit_jar):$(slf4j_api_jar):$(slf4j_nop_jar):$(mysql_jar)
+class_path := .:$(junit_jar):$(dbunit_jar):$(slf4j_api_jar):$(slf4j_nop_jar):$(mysql_jar):$(joda_jar)
 
 
 flags := "-Xlint:unchecked"
@@ -41,6 +43,10 @@ tq: TestQuery.java
 gc: GimmeConn.java
 	javac $(flags) -cp $(class_path) GimmeConn.java
 	java -cp $(class_path) GimmeConn
+
+ui: Main.java
+	javac $(flags) -cp $(class_path) Main.java
+	java -cp $(class_path) Main
 
 clean:
 	rm *.class
