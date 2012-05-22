@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ModifyDb
@@ -71,15 +72,18 @@ public class ModifyDb
    *  doesn't exist.
    *
    *  @param table
-   *  @param bean   map of column/value pairs
+   *  @param bean_in  map of column/value pairs
    *  @throws SQLException
    */
   public void modRow(String table, Map<String, String> bean) throws SQLException//{{{
   {
+    Map<String, String> mybean = new HashMap<String, String>();
+    mybean.putAll(bean);
+
     // get primary key, then remove it from map
     String pkName = "id";
-    Integer pkValue = Integer.valueOf(bean.get("id"));
-    bean.remove("id");
+    Integer pkValue = Integer.valueOf(mybean.get("id"));
+    mybean.remove("id");
 
     // if primary key isn't in table, add it
     if (!qry.keyExists(table, pkName, pkValue))
@@ -89,12 +93,12 @@ public class ModifyDb
     }
 
     // loop through map, updating column/value pairs
-    for (String key : bean.keySet())
+    for (String key : mybean.keySet())
     {
       ps = conn.prepareStatement(
         String.format("update %s set %s = ? ", table, key) +
         String.format("where %s = ?", pkName));
-      ps.setString(1, bean.get(key));
+      ps.setString(1, mybean.get(key));
       ps.setInt(2, pkValue);
 
       ps.executeUpdate();
