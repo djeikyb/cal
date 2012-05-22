@@ -11,17 +11,30 @@ import org.joda.time.LocalDate;
 public class Main
 {
   /**
+   *  Writes parenthesis around the day of month.
+   *
+   *  @param sb   string builder to modify
+   *  @param o    start writing this many chars in
    */
   public static StringBuilder wrapParen(StringBuilder sb, Integer o)
   {
     sb.setCharAt(o+1, ')');
+
     if (sb.charAt(o-1) == ' ')  sb.setCharAt(o-1, '(');
-    else                      sb.setCharAt(o-2, '(');
+    else                        sb.setCharAt(o-2, '(');
 
     return sb;
   }
 
+
   /**
+   *  Writes a day-of-month number to the appropriate spot of a 40-char string
+   *  builder. Then passes it to wrapParen if there is an event on the date.
+   *
+   *  @param l    list of events for a time period
+   *  @param d    the current date to be written
+   *  @param sb   string builder to modify
+   *  @param o    start writing this many chars in
    */
   public static StringBuilder writeDay(List<LocalDate> l, LocalDate d, StringBuilder sb, Integer o)
   {
@@ -30,6 +43,7 @@ public class Main
 
     return sb;
   }
+
 
   /**
    *  Returns a string holding a formatted calendar month.
@@ -79,36 +93,28 @@ public class Main
     List<LocalDate> daysOfMonth = CalendarRegistry.getDatesInRange(startMonth, endMonth);
     for (LocalDate d : daysOfMonth)
     {
-      Integer o;  // offset
       switch (d.dayOfWeek().get())
       {
         case 1:
-          o = 2;
-          writeDay(events, d, week, o);
+          writeDay(events, d, week, 2);
           break;
         case 2:
-          o = 8;
-          writeDay(events, d, week, o);
+          writeDay(events, d, week, 8);
           break;
         case 3:
-          o = 14;
-          writeDay(events, d, week, o);
+          writeDay(events, d, week, 14);
           break;
         case 4:
-          o = 20;
-          writeDay(events, d, week, o);
+          writeDay(events, d, week, 20);
           break;
         case 5:
-          o = 26;
-          writeDay(events, d, week, o);
+          writeDay(events, d, week, 26);
           break;
         case 6:
-          o = 32;
-          writeDay(events, d, week, o);
+          writeDay(events, d, week, 32);
           break;
         default:
-          o = 38;
-          writeDay(events, d, week, o);
+          writeDay(events, d, week, 38);
           cal.append("\n" + week);
           week = new StringBuilder("                                        ");  // forty spaces
           break;
@@ -130,6 +136,7 @@ public class Main
 
     return cal.toString();
   }
+
 
   /**
    * Prints the current month
