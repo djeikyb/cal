@@ -155,10 +155,63 @@ public class Main
       Integer input;
       Scanner sc = new Scanner(System.in);
 
-      System.out.println("1) ");
+      /*  at first screen, with month in view
+       */
+      System.out.println("#) View day #.");
+      System.out.println("h) Previous month.");
+      System.out.println("l) Next month.");
+      System.out.println("q) Enter 'q' to quit.");
+
+
+      /*  at events for day
+       */
+      System.out.println("b) Back to month.");
+      System.out.println("h) Previous day.");
+      System.out.println("l) Next day.");
+      System.out.println("#) View event #.");
+      System.out.println("n) Add new event.");
+      System.out.println("q) Quit.");
+
+
+      /*  at view event
+       */
+      System.out.println("b) Back to day.");
+      System.out.println("h) Previous event.");
+      System.out.println("l) Next event.");
+      System.out.println("d) Delete this event.");
+      System.out.println("e) Edit this event.");
+      System.out.println("q) Quit.");
+
+
+      /*  at edit event
+       *  should show old info while prompting for new
+       */
+      System.out.println("Description:");
+      // et al
+
+
+      /*  at TODO absolutely no plan here
+       *  how should guests be talked about?
+       *  TODO future feature: add/delete guests
+       */
+
+
+      /*  at select guests
+       *  TODO allow scrolling more or less style
+       */
+      System.out.println("#) Select guest #.");
+
+
+
 
       System.out.print("> ");
       input = sc.nextInt();
+
+      switch (input)
+      {
+        case 1:
+      }
+
 
     }
 
