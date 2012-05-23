@@ -61,7 +61,7 @@ public class CalendarRegistry
   }//}}}
 
   /**
-   *  Composite method to send() bean to db, then fetchEvents() to update cache
+   *  Composite method to save() bean to db, then fetchEvents() to update cache
    *
    *  @param type   type of bean: guest || event
    *  @param bean   bean to save
