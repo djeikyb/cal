@@ -148,7 +148,7 @@ public class CalendarRegistry
   }//}}}
 
   /**
-   *  Returns an event bean for specific day
+   *  Returns an event bean for specific event id
    *
    *  @throws SQLException
    */
