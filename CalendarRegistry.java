@@ -67,11 +67,11 @@ public class CalendarRegistry
    *  @param bean   bean to save
    *  @throws SQLException
    */
-  public static void save(String type, Map<String, String> bean) throws SQLException
+  public static void save(String type, Map<String, String> bean) throws SQLException//{{{
   {
     send(type, bean);
     fetchEvents(Arrays.asList(Integer.valueOf(bean.get("id"))));
-  }
+  }//}}}
 
   /**
    *  Returns a list of "unregistered" event ids.
