@@ -102,7 +102,8 @@ public class QueryDb
   /**
    *  Returns the max id. Useful for determining what the next auto incremented
    *  will be.
-   * @throws SQLException 
+   *
+   *  @throws SQLException
    */
   public Integer maxId(String table) throws SQLException//{{{
   {
@@ -178,6 +179,12 @@ public class QueryDb
 //  event table queries
 //------------------------------------------------------------------------------
 
+  /**
+   *  Returns list of event ids of a day.
+   *
+   *  @param day  day to check events for
+   *  @throws SQLException
+   */
   public List<Integer> getEvents_this(String day) throws SQLException//{{{
   {
     ps = conn.prepareStatement(
@@ -191,17 +198,17 @@ public class QueryDb
    *  Returns list of event ids. If no events exist are found for the days,
    *  return an empty list.
    *
-   *  @param days   list of days to check events for
+   *  @param dates   list of days to check events for, ie 2012-05-31
    *  @throws SQLException
    */
-  public List<Integer> getEvents_these(List<String> days) throws SQLException//{{{
+  public List<Integer> getEvents_these(List<String> dates) throws SQLException//{{{
   {
     List<Integer> result = new ArrayList<Integer>();
 
     ps = conn.prepareStatement(
       "select id from events where day = ?");
 
-    for (String day : days)
+    for (String day : dates)
     {
       ps.setString(1, day);
       rs = ps.executeQuery();
