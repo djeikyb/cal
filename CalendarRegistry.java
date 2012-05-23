@@ -12,6 +12,19 @@ import java.util.Map;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 
+
+/**
+ *  Contract.
+ *
+ *  1. Registry needn't know every object in database
+ *  2. Registry must always have the latest info for objects it knows about.
+ *
+ *  Implications.
+ *
+ *  1. Reg doesn't know every object in database
+ *  2. Reg always has latest info for objects it knows
+ *  3. Reg must update known objects every time it accesses the database.
+ */
 public class CalendarRegistry
 {
   static QueryDb q = new QueryDb();
