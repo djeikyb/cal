@@ -225,4 +225,22 @@ public class CalendarRegistry
 
     return eventDays;
   }//}}}
+
+  /**
+   *  Returns a list of event ids for a date.
+   *
+   *  Also updates event bean list as needed.
+   *
+   *  @throws SQLException
+   */
+  public static List<Integer> getEventsFor(LocalDate ld) throws SQLException
+  {
+    // hit database for list of ids
+    List<Integer> eids = q.getEvents_these(Arrays.asList(ld.toString()));
+
+    // update event bean list as needed
+    updateEventBeans(eids);
+
+    return eids;
+  }
 }

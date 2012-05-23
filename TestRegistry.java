@@ -484,4 +484,52 @@ public class TestRegistry
      * null pointer instead of the id it wants.
      */
   }//}}}
+
+  @Test
+  public void test_getEventsFor() throws SQLException
+  {
+    // expected
+
+    List<Integer> expected = Arrays.asList(5, 6);
+
+
+    // actual
+
+    List<Integer> result = CalendarRegistry.getEventsFor(new LocalDate(2012,05,05));
+
+
+    // will it blend?
+
+    assertThat(result, is(expected));
+  }
+
+  @Test
+  public void test_getEventsFor_empty() throws SQLException
+  {
+    // expected
+
+    List<Integer> expected = Arrays.asList();
+
+
+    // result
+
+    List<Integer> result = CalendarRegistry.getEventsFor(new LocalDate(2012,05,06));
+
+
+    // will it blend?
+
+    assertThat(result, is(expected));
+  }
+
+  @Test
+  public void test_fetchEvents()
+  {
+    assertTrue("test unwritten", false);
+  }
+
+  @Test
+  public void test_fetchGuests()
+  {
+    assertTrue("test unwritten", false);
+  }
 }
