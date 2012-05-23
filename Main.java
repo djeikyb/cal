@@ -2,7 +2,9 @@ package gps.tasks.task3663;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -148,7 +150,17 @@ public class Main
 
   public static void main(String[] args)
   {
-    System.out.println(monthCal());
-    System.out.println(monthCal(new LocalDate(2012, 9, 1)));
+    while (true)
+    {
+      Integer input;
+      Scanner sc = new Scanner(System.in);
+
+      System.out.println("1) ");
+
+      System.out.print("> ");
+      input = sc.nextInt();
+
+    }
+
   }
 }
