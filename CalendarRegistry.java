@@ -14,16 +14,21 @@ import org.joda.time.LocalDate;
 
 
 /**
- *  Contract.
+ *  .
+ *  Contract
  *
- *  1. Registry needn't know every object in database
- *  2. Registry must always have the latest info for objects it knows about.
+ *  1. All database access must go through registry.
+ *  2. Registry needn't know every object in database.
+ *  3. Registry must always have the latest info for objects it knows about.
  *
- *  Implications.
+ *  Implications
  *
- *  1. Reg doesn't know every object in database
- *  2. Reg always has latest info for objects it knows
- *  3. Reg must update known objects every time it accesses the database.
+ *  1. Reg doesn't know every object in database.
+ *  2. Reg always has latest info for objects it knows.
+ *  3. Reg pulls from database when it doesn't know a requested object.
+ *  4. Reg must pull from database to get list of all objects matching a pattern.
+ *      - needn't pull full object
+ *  5. When it pushes to the database, reg must also update itself.
  */
 public class CalendarRegistry
 {
@@ -201,8 +206,11 @@ public class CalendarRegistry
   }//}}}
 
   /**
-   *  Returns a list of eventful days for date range
-   * @throws SQLException
+   *  Returns a list of eventful days for date range.
+   *
+   *  Also caches any unknown beans
+   *
+   *  @throws SQLException
    */
   public static List<LocalDate> eventDatesFor(LocalDate start, LocalDate end) throws SQLException//{{{
   {
