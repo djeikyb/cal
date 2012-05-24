@@ -8,10 +8,7 @@ public class Main
   {
     Tui ui = new Tui();
 
-    while (true)
-    {
-      ui.viewMonth(new LocalDate());  // primes tui with today's date
-    }
+    ui.viewMonth(new LocalDate());  // primes tui with today's date
 
   }
 }
