@@ -42,7 +42,7 @@ public class Event
 // bean getter
 //------------------------------------------------------------------------------
 
-  public Map<String, String> getBean()
+  public Map<String, String> getMap()
   {
     Map<String, String> bean = new HashMap<String, String>();
 

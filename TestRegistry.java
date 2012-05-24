@@ -1,9 +1,7 @@
 package gps.tasks.task3663;
 
 import java.io.FileInputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -44,8 +42,6 @@ public class TestRegistry
 //------------------------------------------------------------------------------
 
   private IDatabaseTester dbtester;
-  private Connection gconn = new GimmeConn().conn;
-  private ModifyDb mod = new ModifyDb(gconn);
   IDatabaseConnection dbuconn;
 
   protected IDataSet getDataSet(String f) throws Exception  //{{{
@@ -91,11 +87,10 @@ public class TestRegistry
 
 
 //------------------------------------------------------------------------------
-//  Tests
+//  tests for cache helpers
 //------------------------------------------------------------------------------
-
   @Test
-  public void test_addEventBeans() throws SQLException  //{{{
+  public void test_fetchEvents() throws SQLException  //{{{
   {
     // expected value of CalendarRegistry.eventBeans
 
@@ -148,7 +143,7 @@ public class TestRegistry
   } //}}}
 
   @Test
-  public void test_addGuestBeans_weirdName() throws SQLException  //{{{
+  public void test_fetchGuests_weirdName() throws SQLException  //{{{
   {
     //  expected value of CalendarRegistry.guestBeans
 
@@ -177,7 +172,7 @@ public class TestRegistry
   } //}}}
 
   @Test
-  public void test_addGuestBeans() throws SQLException  //{{{
+  public void test_fetchGuests() throws SQLException  //{{{
   {
     // expected value of CalendarRegistry.GuestBeans
 
@@ -217,6 +212,7 @@ public class TestRegistry
     assertThat(result, is(expected));
   } //}}}
 
+
   @Test
   public void test_unregEvents() throws SQLException  //{{{
   {
@@ -251,131 +247,11 @@ public class TestRegistry
   } //}}}
 
   @Test
-  public void test_getEventTagLines() throws SQLException //{{{
+  public void test_unregGuests()
   {
-    // expected
+    assertTrue("test unwritten", false);
+  }
 
-    Map<Integer, String> expected = new HashMap<Integer, String>();
-
-    expected.put(2, "all hallows eve, when ghouls moan and banshees scr");
-    expected.put(6, "cinco de mayo");
-
-
-    // result
-
-    Map<Integer, String> result = CalendarRegistry.getEventTaglines(Arrays.asList(2, 6));
-
-
-    // will it blend?
-
-    assertThat(result, is(expected));
-  } //}}}
-
-  @Test
-  public void test_getEvent_cached() throws SQLException//{{{
-  {
-    // expected
-
-    Map<String, String> expected = new HashMap<String, String>();
-    expected.put("id",           "5");
-    expected.put("day",          "2012-05-05");
-    expected.put("timeStart",    "15:00");
-    expected.put("timeEnd",      "18:00");
-    expected.put("kind",         "other");
-    expected.put("description",  "cinco de mayo happy hour");
-    expected.put("guests",       "");
-
-
-    // add to event bean list
-
-    CalendarRegistry.eventBeans.put(5, expected);
-
-
-    // result
-
-    Map<String, String> result = CalendarRegistry.getEvent(5);
-
-
-    // will it blend?
-
-    assertThat(result, is(expected));
-  }//}}}
-
-  @Test
-  public void test_getEvent_uncached() throws SQLException//{{{
-  {
-    // expected
-
-    Map<String, String> expected = new HashMap<String, String>();
-    expected.put("id",           "5");
-    expected.put("day",          "2012-05-05");
-    expected.put("timeStart",    "15:00");
-    expected.put("timeEnd",      "18:00");
-    expected.put("kind",         "other");
-    expected.put("description",  "cinco de mayo happy hour");
-    expected.put("guests",       "");
-
-
-    // result
-
-    Map<String, String> result = CalendarRegistry.getEvent(5);
-
-
-    // will it blend?
-
-    assertThat(result, is(expected));
-  }//}}}
-
-  @Test
-  public void test_getDatesInRange()//{{{
-  {
-    // expected
-
-    List<LocalDate> expected = Arrays.asList(
-      new LocalDate(2012, 05, 28),
-      new LocalDate(2012, 05, 29),
-      new LocalDate(2012, 05, 30),
-      new LocalDate(2012, 05, 31),
-      new LocalDate(2012, 06, 01),
-      new LocalDate(2012, 06, 02),
-      new LocalDate(2012, 06, 03));
-
-
-    // actual
-
-    List<LocalDate> result = CalendarRegistry.getDatesInRange(
-      new LocalDate(2012, 05, 28),
-      new LocalDate(2012, 06, 03));
-
-
-    // will it blend?
-
-    assertThat(result, is(expected));
-  }//}}}
-
-  @Test
-  public void test_eventDates() throws SQLException//{{{
-  {
-    // expected
-
-    List<LocalDate> expected = Arrays.asList(
-      new LocalDate(2012, 05, 05),
-      new LocalDate(2012, 05, 05),
-      new LocalDate(2012, 05, 13),
-      new LocalDate(2012, 05, 28));
-
-
-    // actual
-
-    List<LocalDate> result = CalendarRegistry.eventDatesFor(
-      new LocalDate(2012, 05, 01),
-      new LocalDate(2012, 05, 31));
-
-
-    // will it blend?
-
-    assertThat(result, is(expected));
-  }//}}}
 
   @Test
   public void test_updateEventBeans() throws SQLException//{{{
@@ -436,6 +312,18 @@ public class TestRegistry
   }//}}}
 
   @Test
+  public void test_updateGuestBeans()
+  {
+    assertTrue("test unwritten", false);
+  }
+
+
+
+//------------------------------------------------------------------------------
+//  misc generic (aka multipath)
+//------------------------------------------------------------------------------
+
+  @Test
   public void test_send_event() throws Exception//{{{
   {
     // expected table values
@@ -450,7 +338,7 @@ public class TestRegistry
     e.setId("3");
     e.setTimeStart("00:00");
 
-    CalendarRegistry.send("event", e.getBean());
+    CalendarRegistry.send("event", e.getMap());
 
 
     // capture side effects
@@ -473,7 +361,7 @@ public class TestRegistry
     e.setId("3");
     e.setTimeStart("00:00");
 
-    CalendarRegistry.save("event", e.getBean());
+    CalendarRegistry.save("event", e.getMap());
 
     /*
      * test passes if nothing borks.
@@ -486,7 +374,207 @@ public class TestRegistry
   }//}}}
 
   @Test
-  public void test_getEventsFor() throws SQLException
+  public void test_send_guest() throws SQLException
+  {
+    assertTrue("test unwritten", false);
+  }
+
+  @Test
+  public void test_save_guest() throws SQLException
+  {
+    assertTrue("test unwritten", false);
+  }
+
+
+
+//------------------------------------------------------------------------------
+//  tests guest ui methods
+//------------------------------------------------------------------------------
+
+
+  @Test
+  public void test_getGuests() throws SQLException
+  {
+    // expected
+
+    List<Integer> expected = Arrays.asList(1,2,3,4,5);
+
+
+    // result
+
+    List<Integer> result = CalendarRegistry.getGuests();
+
+
+    // will it blend?
+
+    assertThat(result, is(expected));
+  }
+
+  @Test
+  public void test_getGuestNames() throws SQLException
+  {
+    // expected
+
+    Map<Integer, String> expected = new HashMap<Integer, String>();
+    expected.put(3, "Dweezil");
+    expected.put(2, "Moon Unit");
+
+
+    // result
+
+    Map<Integer, String> result = CalendarRegistry.getGuestNames(Arrays.asList(2,3));
+
+
+    // will it blend?
+
+    assertThat(result, is(expected));
+  }
+
+
+
+//------------------------------------------------------------------------------
+//  tests event ui methods
+//------------------------------------------------------------------------------
+
+  @Test
+  public void test_getEventTagLines() throws SQLException //{{{
+  {
+    // expected
+
+    Map<Integer, String> expected = new HashMap<Integer, String>();
+
+    expected.put(2, "all hallows eve, when ghouls moan and banshees scr");
+    expected.put(6, "cinco de mayo");
+
+
+    // result
+
+    Map<Integer, String> result = CalendarRegistry.getEventTaglines(Arrays.asList(2, 6));
+
+
+    // will it blend?
+
+    assertThat(result, is(expected));
+  } //}}}
+
+  @Test
+  public void test_getEvent_cached() throws SQLException//{{{
+  {
+    // make map for cache
+
+    Map<String, String> cache = new HashMap<String, String>();
+    cache.put("id",           "5");
+    cache.put("day",          "2012-05-05");
+    cache.put("timeStart",    "15:00");
+    cache.put("timeEnd",      "18:00");
+    cache.put("kind",         "other");
+    cache.put("description",  "cinco de mayo happy hour");
+    cache.put("guests",       "");
+
+
+    // add map to event bean list aka cache
+
+    CalendarRegistry.eventBeans.put(5, cache);
+
+
+    // expected
+
+    Event expected = new Event(5);
+    expected.setDay(          "2012-05-05");
+    expected.setDescription(  "cinco de mayo happy hour");
+    expected.setGuests(       "");
+    expected.setKind(         "other");
+    expected.setTimeEnd(      "18:00");
+    expected.setTimeStart(    "15:00");
+
+
+    // result
+
+    Event result = CalendarRegistry.getEvent(5);
+
+
+    // will it blend?
+
+    assertThat(result.getMap(), is(expected.getMap()));
+  }//}}}
+
+  @Test
+  public void test_getEvent_uncached() throws SQLException//{{{
+  {
+    // expected
+
+    Event expected = new Event(5);
+    expected.setDay(          "2012-05-05");
+    expected.setDescription(  "cinco de mayo happy hour");
+    expected.setGuests(       "");
+    expected.setKind(         "other");
+    expected.setTimeEnd(      "18:00");
+    expected.setTimeStart(    "15:00");
+
+
+    // result
+
+    Event result = CalendarRegistry.getEvent(5);
+
+
+    // will it blend?
+
+    assertThat(result.getMap(), is(expected.getMap()));
+  }//}}}
+
+  @Test
+  public void test_getDatesInRange()//{{{
+  {
+    // expected
+
+    List<LocalDate> expected = Arrays.asList(
+      new LocalDate(2012, 05, 28),
+      new LocalDate(2012, 05, 29),
+      new LocalDate(2012, 05, 30),
+      new LocalDate(2012, 05, 31),
+      new LocalDate(2012, 06, 01),
+      new LocalDate(2012, 06, 02),
+      new LocalDate(2012, 06, 03));
+
+
+    // actual
+
+    List<LocalDate> result = CalendarRegistry.getDatesInRange(
+      new LocalDate(2012, 05, 28),
+      new LocalDate(2012, 06, 03));
+
+
+    // will it blend?
+
+    assertThat(result, is(expected));
+  }//}}}
+
+  @Test
+  public void test_eventDatesFor() throws SQLException//{{{
+  {
+    // expected
+
+    List<LocalDate> expected = Arrays.asList(
+      new LocalDate(2012, 05, 05),
+      new LocalDate(2012, 05, 05),
+      new LocalDate(2012, 05, 13),
+      new LocalDate(2012, 05, 28));
+
+
+    // actual
+
+    List<LocalDate> result = CalendarRegistry.eventDatesFor(
+      new LocalDate(2012, 05, 01),
+      new LocalDate(2012, 05, 31));
+
+
+    // will it blend?
+
+    assertThat(result, is(expected));
+  }//}}}
+
+  @Test
+  public void test_getEventsFor() throws SQLException//{{{
   {
     // expected
 
@@ -501,10 +589,10 @@ public class TestRegistry
     // will it blend?
 
     assertThat(result, is(expected));
-  }
+  }//}}}
 
   @Test
-  public void test_getEventsFor_empty() throws SQLException
+  public void test_getEventsFor_empty() throws SQLException//{{{
   {
     // expected
 
@@ -519,17 +607,7 @@ public class TestRegistry
     // will it blend?
 
     assertThat(result, is(expected));
-  }
+  }//}}}
 
-  @Test
-  public void test_fetchEvents()
-  {
-    assertTrue("test unwritten", false);
-  }
 
-  @Test
-  public void test_fetchGuests()
-  {
-    assertTrue("test unwritten", false);
-  }
 }

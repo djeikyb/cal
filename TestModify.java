@@ -1,27 +1,14 @@
 package gps.tasks.task3663;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import com.mysql.jdbc.Driver;
-
-import org.dbunit.DBTestCase;
 import org.dbunit.IDatabaseTester;
 import org.dbunit.JdbcDatabaseTester;
-import org.dbunit.PropertiesBasedJdbcDatabaseTester;
 import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.ITable;
-import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSetBuilder;
 import org.dbunit.operation.DatabaseOperation;
 import org.dbunit.Assertion;
@@ -29,9 +16,7 @@ import org.dbunit.Assertion;
 import org.junit.Test;
 import org.junit.After;
 import org.junit.Before;
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 public class TestModify
 {
@@ -140,7 +125,7 @@ public class TestModify
     e.setDescription("end of the world");
     e.setGuests("");
 
-    mod.modRow("events", e.getBean());
+    mod.modRow("events", e.getMap());
 
 
     // capture side effects
@@ -169,7 +154,7 @@ public class TestModify
     e.setId("3");
     e.setTimeStart("00:00");
 
-    mod.modRow("events", e.getBean());
+    mod.modRow("events", e.getMap());
 
 
     // capture side effects

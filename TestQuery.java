@@ -3,7 +3,6 @@ package gps.tasks.task3663;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +19,6 @@ import org.junit.Test;
 import org.junit.After;
 import org.junit.Before;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.core.Is.is;
@@ -40,7 +38,6 @@ public class TestQuery
 
   private IDatabaseTester dbtester;
   private Connection gconn = new GimmeConn().conn;
-  private ModifyDb mod = new ModifyDb(gconn);
   private QueryDb q = new QueryDb(gconn);
   IDatabaseConnection dbuconn;
 
@@ -266,6 +263,16 @@ public class TestQuery
     Integer actual = q.nextId("events");
 
     Integer expected = 10;
+
+    assertThat(actual, is(expected));
+  }
+
+  @Test
+  public void test_getGuests() throws SQLException
+  {
+    List<Integer> actual = q.getGuests();
+
+    List<Integer> expected = Arrays.asList(1,2,3,4,5);
 
     assertThat(actual, is(expected));
   }

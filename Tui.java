@@ -2,6 +2,7 @@ package gps.tasks.task3663;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,6 +108,9 @@ public class Tui
       return 'z';
   }
 
+  /**
+   *  Returns formatted event details.
+   */
   public String eventDetail(Event bean)
   {
     StringBuilder sb = new StringBuilder();
@@ -259,14 +263,24 @@ public class Tui
       Integer n = readInteger(input);
 
       // ignore command if the option doesn't exist
-      if (options.containsKey(n))   viewEvent(now, new Event(options.get(n)));
-      else                          viewDay(now);
+      if (options.containsKey(n))
+      {
+        try
+        {
+          viewEvent(now, CalendarRegistry.getEvent(options.get(n)));
+        }
+        catch (SQLException e)
+        {
+          System.err.println("Database error");
+        }
+      }
+      else viewDay(now);
     }
     else
     {
       switch (intent)
       {
-        case 'a': editEvent(new Event());              break;
+        case 'a': editEvent(now, new Event());              break;
 
         // navigation
         case 'b': viewMonth(now);             break;
@@ -297,120 +311,250 @@ public class Tui
 
 
     // command
-    System.out.println("d) Delete this event");
+    //System.out.println("d) Delete this event");   // TODO
     System.out.println("e) Edit this event");
     System.out.println("a) Attach guests");
     System.out.println();
 
     // navigation
     System.out.println("b) Back to day");
-    System.out.println("p) Previous event");
-    System.out.println("n) Next event");
+    //System.out.println("p) Previous event");
+    //System.out.println("n) Next event");
 
     // footer
     System.out.print(menuFoot());
 
     // input
     String input = getInput();
+    Character intent = getIntent(input);
+
+    switch (intent)
+    {
+    /*
+      case 'd':
+        try
+        {
+          CalendarRegistry.deleteEvent(bean.getId());
+        }
+        catch (SQLException e)
+        {
+          System.err.println("Database error");
+        }
+        finally
+        {
+          viewDay(now);
+        }
+        break;
+     */
+      case 'e': editEvent(now, bean);      break;
+      case 'a': attachGuest(now, bean);   break;
+
+      case 'b': viewDay(now);
+    }
   }
 
   /**
    *  Edits an event. Pushes to view event.
    */
-  public void editEvent(Event bean)
+  public void editEvent(LocalDate now, Event bean)
   {
-    /*  should show old info while prompting for new, if any exists
-     *  should keep old info if blank line
-     *  don't need:
-     *    - id, because it's auto generated
-     *    - day, because the only path to this screen is a day
-     *    - guests, because it's handled at view event screen
-     */
     String input;
 
     System.out.println(eventDetail(bean) + "\n");
 
-    System.out.println("Description:");
-    System.out.print(prompt());
-    // TODO: make while..try..catch less fugly
-    while (true)
+
+// {{{ auto generated with editevent.py
+      System.out.println("Description:");
+      System.out.print(prompt());
+      // TODO: make while..try..catch less fugly
+      while (true)
+      {
+        try
+        {
+          input = sc.nextLine();
+          if (!input.isEmpty())   bean.setDescription(input);
+          break;
+        }
+        catch (IllegalArgumentException e)
+        {
+          System.out.println(e.getMessage());
+          System.out.print(prompt());
+        }
+      }
+
+      System.out.println("Start time:");
+      System.out.print(prompt());
+      // TODO: make while..try..catch less fugly
+      while (true)
+      {
+        try
+        {
+          input = sc.nextLine();
+          if (!input.isEmpty())   bean.setTimeStart(input);
+          break;
+        }
+        catch (IllegalArgumentException e)
+        {
+          System.out.println(e.getMessage());
+          System.out.print(prompt());
+        }
+      }
+
+      System.out.println("End time:");
+      System.out.print(prompt());
+      // TODO: make while..try..catch less fugly
+      while (true)
+      {
+        try
+        {
+          input = sc.nextLine();
+          if (!input.isEmpty())   bean.setTimeEnd(input);
+          break;
+        }
+        catch (IllegalArgumentException e)
+        {
+          System.out.println(e.getMessage());
+          System.out.print(prompt());
+        }
+      }
+
+      System.out.println("Kind:");
+      System.out.print(prompt());
+      // TODO: make while..try..catch less fugly
+      while (true)
+      {
+        try
+        {
+          input = sc.nextLine();
+          if (!input.isEmpty())   bean.setKind(input);
+          break;
+        }
+        catch (IllegalArgumentException e)
+        {
+          System.out.println(e.getMessage());
+          System.out.print(prompt());
+        }
+      }
+
+// }}} END auto generated with editevent.py
+
+
+    // save to database
+    try
     {
-      try
-      {
-        input = sc.nextLine();
-        bean.setDescription(sc.nextLine());
-        break;
-      }
-      catch (IllegalArgumentException e)
-      {
-        System.out.println(e.getMessage());
-        System.out.print(prompt());
-      }
+      CalendarRegistry.save("event", bean.getMap());
+    }
+    catch (SQLException e)
+    {
+      System.err.println("Database error");
     }
 
-    System.out.println("Start time:");
-    System.out.print(prompt());
-    // TODO: make while..try..catch less fugly
-    while (true)
-    {
-      try
-      {
-        bean.setTimeStart(sc.nextLine());
-        break;
-      }
-      catch (IllegalArgumentException e)
-      {
-        System.out.println(e.getMessage());
-        System.out.print(prompt());
-      }
-    }
-
-    System.out.println("End time:");
-    System.out.print(prompt());
-    // TODO: make while..try..catch less fugly
-    while (true)
-    {
-      try
-      {
-        bean.setTimeEnd(sc.nextLine());
-        break;
-      }
-      catch (IllegalArgumentException e)
-      {
-        System.out.println(e.getMessage());
-        System.out.print(prompt());
-      }
-    }
-
-    System.out.println("Kind:");
-    System.out.print(prompt());
-    // TODO: make while..try..catch less fugly
-    while (true)
-    {
-      try
-      {
-        bean.setKind(sc.nextLine());
-        break;
-      }
-      catch (IllegalArgumentException e)
-      {
-        System.out.println(e.getMessage());
-        System.out.print(prompt());
-      }
-    }
+    // push back to day view
+    viewEvent(now, bean);
 
   }
 
   /**
-   *  Attaches a guest to an event. Leads or pushes to view event.
+   *  Attaches a guest to an event. Pushes to view event.
    *  TODO allow scrolling more or less style
    */
-  public void attachGuest()
+  public void attachGuest(LocalDate now, Event bean)
   {
-    // navigation
-    System.out.println("b) Back to event");
+    // get list of guests, if any
+    List<Integer> gids = new ArrayList<Integer>();
+    try
+    {
+      gids = CalendarRegistry.getGuests();
+    }
+    catch (SQLException e)
+    {
+      System.err.println("Database error");
+    }
+
+    // if no guests, say so, otherwise generate options
+    Map<Integer, Integer> options = new HashMap<Integer, Integer>();
+    if (gids.isEmpty())
+    {
+      System.out.println("No guests in database.");
+    }
+    else
+    {
+      // get names
+      Map<Integer, String> names = new HashMap<Integer, String>();
+      try
+      {
+        names = CalendarRegistry.getGuestNames(gids);
+      }
+      catch (SQLException e)
+      {
+        System.err.println("Database error");
+      }
+
+      // generate options
+      Integer counter = 0;
+      for (Integer id : gids)
+      {
+        counter++;
+        options.put(counter, id);
+        System.out.printf("%s. %s\n", counter, names.get(id));
+      }
+      System.out.println();
+    }
 
     // command
     System.out.println("#) Select guest #");
+
+    // navigation
+    System.out.println("b) Back to event");
+
+    // input
+    String input = getInput();
+    Character intent = getIntent(input);
+
+    if (Character.isDigit(intent))  // if digit, intent is adding a guest
+    {
+      Integer n = readInteger(input);
+
+      // ignore command if option doesn't exist
+      if (options.containsKey(n))
+      {
+        // csv to list
+        String[] temp = bean.getGuests().split(",");
+
+System.out.println("temp: " + temp); // debug
+System.out.println("split bean: " + bean.getGuests().split(","));
+
+        ArrayList<String> guest_list = new ArrayList<String>();
+
+System.out.println("new guest_list: " + guest_list); // debug
+
+        for (String s : temp)
+        {
+          guest_list.add(s);
+        }
+
+System.out.println("after adding existing guest_list: " + guest_list); // debug
+
+
+        // if not in list, add the selected guest
+        if (!guest_list.contains(n.toString()))
+        {
+
+System.out.println("options.get(n): " + options.get(n));  // debug
+
+          guest_list.add(options.get(n).toString());
+
+System.out.println("list after adding new: " + guest_list); // debug
+
+          // hack to convert back to simple csv
+          bean.setGuests(guest_list.toString().substring(
+              1, guest_list.toString().length() - 1));
+
+System.out.println("bean guests: " + bean.getGuests());   // debug
+        }
+      }
+    }
+
+    //viewEvent(now, bean);   // no matter what, go here
   }
 }

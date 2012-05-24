@@ -249,5 +249,23 @@ public class QueryDb
 // my thinking so far is that a user only ever asks to see guests of an event,
 // or a list of all the guests
 
+  /**
+   *  @throws SQLException
+   */
+  public List<Integer> getGuests()  throws SQLException
+  {
+    List<Integer> guests = new ArrayList<Integer>();
+
+    ps = conn.prepareStatement(
+      "select id from guests");
+    rs = ps.executeQuery();
+    
+    while (rs.next())
+    {
+      guests.add(rs.getInt(1));
+    }
+
+    return guests;
+  }
 
 }

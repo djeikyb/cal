@@ -1,8 +1,6 @@
 package gps.tasks.task3663;
 
-import java.util.Collection;
 import java.sql.SQLException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,31 +36,125 @@ public class CalendarRegistry
   static Map<Integer, Map<String, String>> eventBeans = new HashMap<Integer, Map<String, String>>();
   static Map<Integer, Map<String, String>> guestBeans = new HashMap<Integer, Map<String, String>>();
 
+
+//------------------------------------------------------------------------------
+//  cache helpers
+//------------------------------------------------------------------------------
+
+
+// {{{ auto generated with genCacheHelpers.py
   /**
    * Populate map of event beans from db.
    *
-   *  @param eids   event ids to fetch from database
+   *  @param ids   event ids to fetch from database
    *  @throws SQLException
    */
-  public static void fetchEvents(List<Integer> eids) throws SQLException//{{{
+  public static void fetchEvents(List<Integer> ids) throws SQLException//{{{
   {
-    Map<Integer, Map<String, String>> beanMom = q.getRows("events", eids);
+    Map<Integer, Map<String, String>> beanMom = q.getRows("events", ids);
 
     eventBeans.putAll(beanMom);
   }//}}}
 
   /**
-   * Populate map of guest beans from db.
+   *  Returns a list of "unregistered" event ids.
    *
-   *  @param gids   guest ids to fetch from database
+   *  @param ids  List of event ids to check
    *  @throws SQLException
    */
-  public static void fetchGuests(List<Integer> gids) throws SQLException//{{{
+  public static List<Integer> unregEvents(List<Integer> ids) throws SQLException//{{{
   {
-    Map<Integer, Map<String, String>> beanMom = q.getRows("guests", gids);
+    List<Integer> missingIds = new ArrayList<Integer>();
+
+    //  if not in beanlist store in list
+    for (Integer id : ids)
+    {
+      if (!eventBeans.containsKey(id))
+      {
+        missingIds.add(id);
+      }
+    }
+
+    return missingIds;
+  }//}}}
+
+  /**
+   *  Updates list of event beans with any it doesn't have.
+   *
+   *  @param ids   list of event ids
+   *  @throws SQLException
+   */
+  public static void updateEventBeans(List<Integer> ids) throws SQLException//{{{
+  {
+    // find any "unregistered" ids
+    List<Integer> missing = unregEvents(ids);
+
+    //  if there were any missing, hit the db and add them
+    if (!missing.isEmpty())
+    {
+      fetchEvents(missing);
+    }
+  }//}}}
+
+  /**
+   * Populate map of guest beans from db.
+   *
+   *  @param ids   guest ids to fetch from database
+   *  @throws SQLException
+   */
+  public static void fetchGuests(List<Integer> ids) throws SQLException//{{{
+  {
+    Map<Integer, Map<String, String>> beanMom = q.getRows("guests", ids);
 
     guestBeans.putAll(beanMom);
   }//}}}
+
+  /**
+   *  Returns a list of "unregistered" guest ids.
+   *
+   *  @param ids  List of guest ids to check
+   *  @throws SQLException
+   */
+  public static List<Integer> unregGuests(List<Integer> ids) throws SQLException//{{{
+  {
+    List<Integer> missingIds = new ArrayList<Integer>();
+
+    //  if not in beanlist store in list
+    for (Integer id : ids)
+    {
+      if (!guestBeans.containsKey(id))
+      {
+        missingIds.add(id);
+      }
+    }
+
+    return missingIds;
+  }//}}}
+
+  /**
+   *  Updates list of guest beans with any it doesn't have.
+   *
+   *  @param ids   list of guest ids
+   *  @throws SQLException
+   */
+  public static void updateGuestBeans(List<Integer> ids) throws SQLException//{{{
+  {
+    // find any "unregistered" ids
+    List<Integer> missing = unregGuests(ids);
+
+    //  if there were any missing, hit the db and add them
+    if (!missing.isEmpty())
+    {
+      fetchGuests(missing);
+    }
+  }//}}}
+
+// }}} END auto generated with genCacheHelpers.py
+
+
+//------------------------------------------------------------------------------
+//  misc
+//------------------------------------------------------------------------------
 
   /**
    *  Sends bean to db.
@@ -71,65 +163,33 @@ public class CalendarRegistry
    *  @param bean   bean to save
    *  @throws SQLException
    */
-  public static void send(String type, Map<String, String> bean) throws SQLException//{{{
+  public static void send(String type, Map<String, String> map) throws SQLException//{{{
   {
-    if      (type.equals("event"))  mod.modRow("events",  bean);
-    else if (type.equals("guest"))  mod.modRow("guests",  bean);
-    else                            mod.modRow(type,      bean);
+    if      (type.equals("event"))  mod.modRow("events",  map);
+    else if (type.equals("guest"))  mod.modRow("guests",  map);
+    else                            mod.modRow(type,      map);
   }//}}}
 
   /**
-   *  Composite method to send() bean to db, then fetchEvents() to update cache
+   *  Composite method to send() bean to db, then fetchEvents() or fetchGuests()
+   *  to update cache
    *
    *  @param type   type of bean: guest || event
    *  @param bean   bean to save
    *  @throws SQLException
    */
-  public static void save(String type, Map<String, String> bean) throws SQLException//{{{
+  public static void save(String type, Map<String, String> map) throws SQLException//{{{
   {
-    send(type, bean);
-    fetchEvents(Arrays.asList(Integer.valueOf(bean.get("id"))));
+    send(type, map);
+    if (type.equals("event")) fetchEvents(Arrays.asList(Integer.valueOf(map.get("id"))));
+    else                      fetchGuests(Arrays.asList(Integer.valueOf(map.get("id"))));
   }//}}}
 
-  /**
-   *  Returns a list of "unregistered" event ids.
-   *
-   *  @param eids  List of event ids to check
-   *  @throws SQLException
-   */
-  public static List<Integer> unregEvents(List<Integer> eids) throws SQLException//{{{
-  {
-    List<Integer> missingEids = new ArrayList<Integer>();
 
-    //  if not in beanlist store in list
-    for (Integer id : eids)
-    {
-      if (!eventBeans.containsKey(id))
-      {
-        missingEids.add(id);
-      }
-    }
 
-    return missingEids;
-  }//}}}
-
-  /**
-   *  Updates list of event beans with any it doesn't have.
-   *
-   *  @param eids   list of event ids
-   * @throws SQLException
-   */
-  public static void updateEventBeans(List<Integer> eids) throws SQLException//{{{
-  {
-    // find any "unregistered" eids
-    List<Integer> missing = unregEvents(eids);
-
-    //  if there were any missing, hit the db and add them
-    if (!missing.isEmpty())
-    {
-      fetchEvents(missing);
-    }
-  }//}}}
+//------------------------------------------------------------------------------
+//  event methods for ui
+//------------------------------------------------------------------------------
 
   /**
    *  Returns a map of (eid, 50-char description).
@@ -167,11 +227,21 @@ public class CalendarRegistry
    *
    *  @throws SQLException
    */
-  public static Map<String, String> getEvent(Integer eid) throws SQLException//{{{
+  public static Event getEvent(Integer eid) throws SQLException//{{{
   {
     updateEventBeans(Arrays.asList(eid));
 
-    return eventBeans.get(eid);
+    Map<String, String> m = eventBeans.get(eid);
+
+    Event event = new Event(eid);
+    event.setDay(         m.get("day"));
+    event.setDescription( m.get("description"));
+    event.setGuests(      m.get("guests"));
+    event.setKind(        m.get("kind"));
+    event.setTimeEnd(     m.get("timeEnd"));
+    event.setTimeStart(   m.get("timeStart"));
+
+    return event;
   }//}}}
 
   /**
@@ -244,14 +314,57 @@ public class CalendarRegistry
    *
    *  @throws SQLException
    */
-  public static List<Integer> getEventsFor(LocalDate ld) throws SQLException
+  public static List<Integer> getEventsFor(LocalDate ld) throws SQLException//{{{
   {
     // hit database for list of ids
-    List<Integer> eids = q.getEvents_these(Arrays.asList(ld.toString()));
+    List<Integer> ids = q.getEvents_these(Arrays.asList(ld.toString()));
 
     // update event bean list as needed
-    updateEventBeans(eids);
+    updateEventBeans(ids);
 
-    return eids;
+    return ids;
+  }//}}}
+
+
+
+//------------------------------------------------------------------------------
+//  guest methods for ui
+//------------------------------------------------------------------------------
+
+  /**
+   *
+   *  @param gids
+   *  @return
+   *  @throws SQLException
+   */
+  public static Map<Integer, String> getGuestNames(List<Integer> ids) throws SQLException
+  {
+    Map<Integer, String> names = new HashMap<Integer, String>();
+
+    updateGuestBeans(ids);
+
+    for (Integer id : ids)
+    {
+      String s = guestBeans.get(id).get("name");
+      names.put(id, s);
+    }
+
+    return names;
+  }
+
+  /**
+   * 
+   *  @return
+   *  @throws SQLException
+   */
+  public static List<Integer> getGuests() throws SQLException
+  {
+    // hit database for list of ids
+    List<Integer> ids = q.getGuests();
+
+    // update guest bean list as needed
+    updateGuestBeans(ids);
+
+    return ids;
   }
 }
