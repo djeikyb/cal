@@ -21,6 +21,14 @@ public class Tui
 //------------------------------------------------------------------------------
 
   /**
+   *  Returns prompt.
+   */
+  public String prompt()
+  {
+    return("\n> ");
+  }
+
+  /**
    *  Returns menu footer.
    */
   public String menuFoot()
@@ -28,7 +36,7 @@ public class Tui
     StringBuilder sb = new StringBuilder();
 
     sb.append("q) Quit\n");
-    sb.append("\n> ");
+    sb.append(prompt());
 
     return sb.toString();
   }
@@ -99,6 +107,18 @@ public class Tui
       return 'z';
   }
 
+  public String eventDetail(Event bean)
+  {
+    StringBuilder sb = new StringBuilder();
+
+    sb.append("Description: "    + bean.getDescription() + "\n"); // TODO: wrap text
+    sb.append("Start time: "     + bean.getTimeStart()   + "\n");
+    sb.append("End time: "       + bean.getTimeEnd()     + "\n");
+    sb.append("Kind: "           + bean.getKind()        + "\n");
+    sb.append("Guests: "         + bean.getGuests()      + "\n");
+
+    return sb.toString();
+  }
 
 
 //------------------------------------------------------------------------------
@@ -123,12 +143,13 @@ public class Tui
     // when are we?
     System.out.println(cal.month(now) + "\n");
 
+    // command
+    System.out.println("#) View day #");
+    System.out.println();
+
     // navigation
     System.out.println("p) Previous month");
     System.out.println("n) Next month");
-
-    // command
-    System.out.println("#) View day #");
 
     // footer
     System.out.print(menuFoot());
@@ -216,14 +237,15 @@ public class Tui
       System.out.println();
     }
 
+    // command
+    System.out.println("#) View event #");
+    System.out.println("a) Add new event");
+    System.out.println();
+
     // navigation
     System.out.println("b) Back to month");
     System.out.println("p) Previous day");
     System.out.println("n) Next day");
-
-    // command
-    System.out.println("#) View event #");
-    System.out.println("a) Add new event");
 
     // footer
     System.out.print(menuFoot());
@@ -237,14 +259,14 @@ public class Tui
       Integer n = readInteger(input);
 
       // ignore command if the option doesn't exist
-      if (options.containsKey(n))   viewEvent(now, options.get(n));
+      if (options.containsKey(n))   viewEvent(now, new Event(options.get(n)));
       else                          viewDay(now);
     }
     else
     {
       switch (intent)
       {
-        case 'a': editEvent(-1);              break;
+        case 'a': editEvent(new Event());              break;
 
         // navigation
         case 'b': viewMonth(now);             break;
@@ -262,25 +284,31 @@ public class Tui
    *
    *  Leads to edit event, attach guests, and view day.
    */
-  public void viewEvent(LocalDate now, Integer eid)
+  public void viewEvent(LocalDate now, Event bean)
   {
     clearScreen();
 
     // when are we?
-    System.out.println(now);
+    System.out.println(now + "\n");
+
+
+    // print event details
+    System.out.println(eventDetail(bean) + "\n");
+
+
+    // command
+    System.out.println("d) Delete this event");
+    System.out.println("e) Edit this event");
+    System.out.println("a) Attach guests");
+    System.out.println();
 
     // navigation
     System.out.println("b) Back to day");
     System.out.println("p) Previous event");
     System.out.println("n) Next event");
 
-    // command
-    System.out.println("d) Delete this event");
-    System.out.println("e) Edit this event");
-    System.out.println("a) Attach guests");
-
     // footer
-    System.out.println(menuFoot());
+    System.out.print(menuFoot());
 
     // input
     String input = getInput();
@@ -289,7 +317,7 @@ public class Tui
   /**
    *  Edits an event. Pushes to view event.
    */
-  public void editEvent(Integer eid)
+  public void editEvent(Event bean)
   {
     /*  should show old info while prompting for new, if any exists
      *  should keep old info if blank line
@@ -298,10 +326,79 @@ public class Tui
      *    - day, because the only path to this screen is a day
      *    - guests, because it's handled at view event screen
      */
+    String input;
+
+    System.out.println(eventDetail(bean) + "\n");
+
     System.out.println("Description:");
+    System.out.print(prompt());
+    // TODO: make while..try..catch less fugly
+    while (true)
+    {
+      try
+      {
+        input = sc.nextLine();
+        bean.setDescription(sc.nextLine());
+        break;
+      }
+      catch (IllegalArgumentException e)
+      {
+        System.out.println(e.getMessage());
+        System.out.print(prompt());
+      }
+    }
+
     System.out.println("Start time:");
+    System.out.print(prompt());
+    // TODO: make while..try..catch less fugly
+    while (true)
+    {
+      try
+      {
+        bean.setTimeStart(sc.nextLine());
+        break;
+      }
+      catch (IllegalArgumentException e)
+      {
+        System.out.println(e.getMessage());
+        System.out.print(prompt());
+      }
+    }
+
     System.out.println("End time:");
+    System.out.print(prompt());
+    // TODO: make while..try..catch less fugly
+    while (true)
+    {
+      try
+      {
+        bean.setTimeEnd(sc.nextLine());
+        break;
+      }
+      catch (IllegalArgumentException e)
+      {
+        System.out.println(e.getMessage());
+        System.out.print(prompt());
+      }
+    }
+
     System.out.println("Kind:");
+    System.out.print(prompt());
+    // TODO: make while..try..catch less fugly
+    while (true)
+    {
+      try
+      {
+        bean.setKind(sc.nextLine());
+        break;
+      }
+      catch (IllegalArgumentException e)
+      {
+        System.out.println(e.getMessage());
+        System.out.print(prompt());
+      }
+    }
+
   }
 
   /**

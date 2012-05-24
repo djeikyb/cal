@@ -1,7 +1,5 @@
 package gps.tasks.task3663;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,9 +15,19 @@ public class Event
 
 
 
-  Event()
+  public Event()
   {
-    id = "-1";
+    this("-1");
+  }
+
+  public Event(Integer eid)
+  {
+    this(eid.toString());
+  }
+
+  public Event(String eid)
+  {
+    id = eid;
     day = "";
     timeStart = "";
     timeEnd = "";
