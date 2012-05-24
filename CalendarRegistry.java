@@ -39,7 +39,7 @@ public class CalendarRegistry
   static Map<Integer, Map<String, String>> guestBeans = new HashMap<Integer, Map<String, String>>();
 
   /**
-   * Populate map of event beans from db
+   * Populate map of event beans from db.
    *
    *  @param eids   event ids to fetch from database
    *  @throws SQLException
@@ -52,7 +52,7 @@ public class CalendarRegistry
   }//}}}
 
   /**
-   * Populate map of guest beans from db
+   * Populate map of guest beans from db.
    *
    *  @param gids   guest ids to fetch from database
    *  @throws SQLException
@@ -79,7 +79,7 @@ public class CalendarRegistry
   }//}}}
 
   /**
-   *  Composite method to save() bean to db, then fetchEvents() to update cache
+   *  Composite method to send() bean to db, then fetchEvents() to update cache
    *
    *  @param type   type of bean: guest || event
    *  @param bean   bean to save
@@ -134,6 +134,8 @@ public class CalendarRegistry
   /**
    *  Returns a map of (eid, 50-char description).
    *
+   *  Also updates registry with any unknown eids.
+   *
    *  @param eids   List of event ids to make taglines from
    *  @throws SQLException
    */
@@ -141,14 +143,7 @@ public class CalendarRegistry
   {
     Map<Integer, String> taglines = new HashMap<Integer, String>();
 
-    // find any "unregistered" eids
-    List<Integer> missing = unregEvents(eids);
-
-    //  if there were any missing, hit the db and add them
-    if (!missing.isEmpty())
-    {
-      fetchEvents(missing);
-    }
+    updateEventBeans(eids);
 
     for (Integer id : eids)
     {
@@ -166,20 +161,15 @@ public class CalendarRegistry
   }//}}}
 
   /**
-   *  Returns an event bean for specific event id
+   *  Returns an event bean for specific event id.
+   *
+   *  Also updates registry if eid is unknown.
    *
    *  @throws SQLException
    */
   public static Map<String, String> getEvent(Integer eid) throws SQLException//{{{
   {
-    // find any "unregistered" eids
-    List<Integer> missing = unregEvents(Arrays.asList(eid));
-
-    //  if there were any missing, hit the db and add them
-    if (!missing.isEmpty())
-    {
-      fetchEvents(missing);
-    }
+    updateEventBeans(Arrays.asList(eid));
 
     return eventBeans.get(eid);
   }//}}}
