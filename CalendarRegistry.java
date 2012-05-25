@@ -180,9 +180,14 @@ public class CalendarRegistry
    */
   public static void save(String type, Map<String, String> map) throws SQLException//{{{
   {
+    Integer id = Integer.valueOf(map.get("id"));
+    if (id < 0)
+    {
+      id = q.nextId(type);
+    }
     send(type, map);
-    if (type.equals("event")) fetchEvents(Arrays.asList(Integer.valueOf(map.get("id"))));
-    else                      fetchGuests(Arrays.asList(Integer.valueOf(map.get("id"))));
+    if (type.equals("events"))  fetchEvents(Arrays.asList(id));
+    else                        fetchGuests(Arrays.asList(id));
   }//}}}
 
 
@@ -353,7 +358,7 @@ public class CalendarRegistry
   }
 
   /**
-   * 
+   *
    *  @return
    *  @throws SQLException
    */
