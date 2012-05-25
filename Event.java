@@ -88,9 +88,14 @@ public class Event
     return timeStart;
   }
 
-  public void setTimeStart(String timeStart)
+  public void setTimeStart(String s)
   {
-    this.timeStart = timeStart;
+    /*
+    String e = "Not a valid time";
+
+    if (s.length() > 5)   throw new IllegalArgumentException(e);
+    */
+    this.timeStart = s;
   }
 
 
