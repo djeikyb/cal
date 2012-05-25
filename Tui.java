@@ -57,7 +57,7 @@ public class Tui
    */
   public void clearScreen()
   {
-    Integer end = 1000;    // how many newlines to print
+    Integer end = 60;    // how many newlines to print
     StringBuilder sb = new StringBuilder(end);
     for (Integer i = 0; i < end; i++)
     {
@@ -109,6 +109,31 @@ public class Tui
   }
 
   /**
+   *  @param s  comma separated integers
+   *  @return   list
+   */
+  public List<Integer> csi2list(String s)
+  {
+    ArrayList<Integer> result = new ArrayList<Integer>();
+    for (String o : s.replaceAll(" ","").split(","))
+      if (!o.isEmpty())
+        result.add(Integer.valueOf(o));  // otherwise you maybe get L[,e]
+
+    return result;
+  }
+
+  /**
+   *  @param l  list
+   *  @return   comma separated values
+   */
+  public String list2csv(List l)
+  {
+    return
+      l.toString().substring(
+        1, l.toString().length() - 1);
+  }
+
+  /**
    *  Returns formatted event details.
    */
   public String eventDetail(Event bean)
@@ -119,9 +144,44 @@ public class Tui
     sb.append("Start time: "     + bean.getTimeStart()   + "\n");
     sb.append("End time: "       + bean.getTimeEnd()     + "\n");
     sb.append("Kind: "           + bean.getKind()        + "\n");
-    sb.append("Guests: "         + bean.getGuests()      + "\n");
+
+    sb.append("Guests: ");
+
+    try
+    {
+      for (String name : CalendarRegistry.getGuestNames(csi2list(bean.getGuests())).values())
+      {
+        sb.append("\n\t- " + name);
+      }
+    }
+    catch (SQLException e)
+    {
+      System.err.println("Database error");
+    }
 
     return sb.toString();
+  }
+
+  /**
+   *  Get bean from registry
+   *
+   *  @param id   event id
+   */
+  public Event getEvent(Integer id)
+  {
+    Event bean = new Event();
+
+    try
+    {
+      bean = CalendarRegistry.getEvent(id);
+    }
+    catch (SQLException e)
+    {
+      System.err.println("Failed to get requested event. Providing a new one.");
+      System.err.println("Database error: " + e);
+    }
+
+    return bean;
   }
 
 
@@ -265,14 +325,7 @@ public class Tui
       // ignore command if the option doesn't exist
       if (options.containsKey(n))
       {
-        try
-        {
-          viewEvent(now, CalendarRegistry.getEvent(options.get(n)));
-        }
-        catch (SQLException e)
-        {
-          System.err.println("Database error");
-        }
+        viewEvent(now, options.get(n));
       }
       else viewDay(now);
     }
@@ -280,7 +333,7 @@ public class Tui
     {
       switch (intent)
       {
-        case 'a': editEvent(now, new Event());              break;
+        case 'a': editEvent(now, Integer.valueOf(new Event().getId()));  break;
 
         // navigation
         case 'b': viewMonth(now);             break;
@@ -298,13 +351,15 @@ public class Tui
    *
    *  Leads to edit event, attach guests, and view day.
    */
-  public void viewEvent(LocalDate now, Event bean)
+  public void viewEvent(LocalDate now, Integer eid)
   {
     clearScreen();
 
     // when are we?
     System.out.println(now + "\n");
 
+    // what event?
+    Event bean = getEvent(eid);
 
     // print event details
     System.out.println(eventDetail(bean) + "\n");
@@ -346,7 +401,7 @@ public class Tui
         }
         break;
      */
-      case 'e': editEvent(now, bean);      break;
+      case 'e': editEvent(now, Integer.valueOf(bean.getId()));      break;
       case 'a': attachGuest(now, bean);   break;
 
       case 'b': viewDay(now);
@@ -356,12 +411,20 @@ public class Tui
   /**
    *  Edits an event. Pushes to view event.
    */
-  public void editEvent(LocalDate now, Event bean)
+  public void editEvent(LocalDate now, Integer eid)
   {
-    String input;
+    // what event?
+    Event bean;
+    if (eid < 0)  bean = new Event();
+    else          bean = getEvent(eid);
 
+    // set the bean's date. mostly important for new events
+    bean.setDay(now.toString());
+
+    // show current event details
     System.out.println(eventDetail(bean) + "\n");
 
+    String input;
 
 // {{{ auto generated with editevent.py
       System.out.println("Description:");
@@ -442,15 +505,15 @@ public class Tui
     // save to database
     try
     {
-      CalendarRegistry.save("event", bean.getMap());
+      CalendarRegistry.save("events", bean.getMap());
     }
     catch (SQLException e)
     {
-      System.err.println("Database error");
+      System.err.println("Database error: " + e);
     }
 
     // push back to day view
-    viewEvent(now, bean);
+    viewEvent(now, Integer.valueOf(bean.getId()));
 
   }
 
@@ -518,43 +581,30 @@ public class Tui
       // ignore command if option doesn't exist
       if (options.containsKey(n))
       {
-        // csv to list
-        String[] temp = bean.getGuests().split(",");
-
-System.out.println("temp: " + temp); // debug
-System.out.println("split bean: " + bean.getGuests().split(","));
-
-        ArrayList<String> guest_list = new ArrayList<String>();
-
-System.out.println("new guest_list: " + guest_list); // debug
-
-        for (String s : temp)
-        {
-          guest_list.add(s);
-        }
-
-System.out.println("after adding existing guest_list: " + guest_list); // debug
-
+        // get guest list
+        List<Integer> guestList = csi2list(bean.getGuests());
 
         // if not in list, add the selected guest
-        if (!guest_list.contains(n.toString()))
+        if (!guestList.contains(n.toString()))
         {
+          guestList.add(options.get(n));
 
-System.out.println("options.get(n): " + options.get(n));  // debug
-
-          guest_list.add(options.get(n).toString());
-
-System.out.println("list after adding new: " + guest_list); // debug
-
-          // hack to convert back to simple csv
-          bean.setGuests(guest_list.toString().substring(
-              1, guest_list.toString().length() - 1));
-
-System.out.println("bean guests: " + bean.getGuests());   // debug
+          // finally, change bean
+          bean.setGuests(list2csv(guestList));
         }
       }
     }
 
-    //viewEvent(now, bean);   // no matter what, go here
+    // save to database
+    try
+    {
+      CalendarRegistry.save("events", bean.getMap());
+    }
+    catch (SQLException e)
+    {
+      System.err.println("Database error");
+    }
+
+    viewEvent(now, Integer.valueOf(bean.getId()));   // no matter what, go here
   }
 }
