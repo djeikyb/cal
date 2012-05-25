@@ -89,6 +89,7 @@ public class TestRegistry
 //------------------------------------------------------------------------------
 //  tests for cache helpers
 //------------------------------------------------------------------------------
+
   @Test
   public void test_fetchEvents() throws SQLException  //{{{
   {
@@ -353,7 +354,7 @@ public class TestRegistry
   }//}}}
 
   @Test
-  public void test_save_event() throws SQLException//{{{
+  public void test_save_eventMod() throws SQLException//{{{
   {
     // use the function
 
@@ -361,7 +362,7 @@ public class TestRegistry
     e.setId("3");
     e.setTimeStart("00:00");
 
-    CalendarRegistry.save("event", e.getMap());
+    CalendarRegistry.save("events", e.getMap());
 
     /*
      * test passes if nothing borks.
@@ -372,6 +373,24 @@ public class TestRegistry
      * null pointer instead of the id it wants.
      */
   }//}}}
+  
+  @Test
+  public void test_save_eventNew() throws SQLException
+  {
+    // use the function
+
+    Event e = new Event();
+    e.setId("-1");
+
+    CalendarRegistry.save("events", e.getMap());
+    
+    /*
+     * test passes if nothing borks.
+     * 
+     * it ensures save() doesn't try to fetch a negative id.
+     */
+
+  }
 
   @Test
   public void test_send_guest() throws SQLException
