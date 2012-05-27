@@ -505,7 +505,8 @@ public class Tui
     // save to database
     try
     {
-      CalendarRegistry.save("events", bean.getMap());
+      bean = new Event(CalendarRegistry.save("events", bean.getMap()));
+
     }
     catch (SQLException e)
     {

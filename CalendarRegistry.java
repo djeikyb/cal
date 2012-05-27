@@ -15,7 +15,7 @@ import org.joda.time.LocalDate;
  *  .
  *  Contract
  *
- *  1. All database access must go through registry.
+ *  1. Registry gets exclusive access to database.
  *  2. Registry needn't know every object in database.
  *  3. Registry must always have the latest info for objects it knows about.
  *
@@ -160,7 +160,7 @@ public class CalendarRegistry
    *  Sends bean to db.
    *
    *  @param type   type of bean: guest || event
-   *  @param bean   bean to save
+   *  @param bean   bean to send
    *  @throws SQLException
    */
   public static void send(String type, Map<String, String> map) throws SQLException//{{{
@@ -172,13 +172,18 @@ public class CalendarRegistry
 
   /**
    *  Composite method to send() bean to db, then fetchEvents() or fetchGuests()
-   *  to update cache
+   *  to update cache. Returns id of bean saved because (of new beans):
+   *
+   *  If the bean is new to the database (ie, id is negative), the database
+   *  assigns a new id. The new id is returned to both registry (to fulfill its
+   *  contract) and save() caller (so it can use the bean).
    *
    *  @param type   type of bean: guest || event
    *  @param bean   bean to save
+   *  @return       id of bean saved
    *  @throws SQLException
    */
-  public static void save(String type, Map<String, String> map) throws SQLException//{{{
+  public static Integer save(String type, Map<String, String> map) throws SQLException//{{{
   {
     Integer id = Integer.valueOf(map.get("id"));
     if (id < 0)
@@ -188,6 +193,8 @@ public class CalendarRegistry
     send(type, map);
     if (type.equals("events"))  fetchEvents(Arrays.asList(id));
     else                        fetchGuests(Arrays.asList(id));
+
+    return id;
   }//}}}
 
 
