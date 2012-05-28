@@ -18,7 +18,11 @@ sqlite_jar    := $(sqlite_home)/sqlite.jar
 joda_jar      := $(joda_home)/joda-time-2.1.jar
 jcurses_jar   := $(jcurses_home)/jcurses-linux-0.9.5b.jar
 
-class_path := .:$(junit_jar):$(db	unit_jar):$(slf4j_api_jar):$(slf4j_nop_jar):$(mysql_jar):$(joda_jar)
+
+package = gps.tasks.task3663
+
+
+class_path := .:$(junit_jar):$(dbunit_jar):$(slf4j_api_jar):$(slf4j_nop_jar):$(mysql_jar):$(joda_jar):/home/jake
 
 
 flags := "-Xlint:unchecked"
@@ -32,23 +36,23 @@ unpackage:
 
 tm: TestModify.java
 	javac -Xlint:unchecked -cp $(class_path) TestModify.java && \
-	java -cp $(class_path) org.junit.runner.JUnitCore TestModify | grep -v "at org.junit"
+	java -cp $(class_path) org.junit.runner.JUnitCore $(package).TestModify | grep -v "at org.junit"
 
 tr: TestRegistry.java
 	javac -Xlint:unchecked -cp $(class_path) TestRegistry.java && \
-	java -cp $(class_path) org.junit.runner.JUnitCore TestRegistry | grep -v "at org.junit"
+	java -cp $(class_path) org.junit.runner.JUnitCore $(package).TestRegistry | grep -v "at org.junit"
 
 tq: TestQuery.java
 	javac -Xlint:unchecked -cp $(class_path) TestQuery.java && \
-	java -cp $(class_path) org.junit.runner.JUnitCore TestQuery | grep -v "at org.junit"
+	java -cp $(class_path) org.junit.runner.JUnitCore $(package).TestQuery | grep -v "at org.junit"
 
 gc: GimmeConn.java
 	javac $(flags) -cp $(class_path) GimmeConn.java
-	java -cp $(class_path) GimmeConn
+	java -cp $(class_path) $(package).GimmeConn
 
 ui: Main.java
 	javac $(flags) -cp $(class_path) Main.java
-	java -cp $(class_path) Main
+	java -cp $(class_path) $(package).Main
 
 clean:
 	rm *.class
